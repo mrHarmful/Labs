@@ -1,0 +1,21 @@
+program Project1;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils,
+  Count;
+
+var
+  n,m,resRec, resIter : integer;
+  c : TCount;
+begin
+  c := TCount.Create;
+  writeln('M = ');
+  readln(m);
+  writeln('N = ');
+  readln(n);
+  resRec := c.countRec(m,n);
+  writeln('Result = ', resRec);
+  c.Free;
+end.
