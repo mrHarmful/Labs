@@ -1,16 +1,22 @@
-﻿using Lab1_Pankov_Rational;
+﻿using Lab2_Pankov_Quiz.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Lab2_Pankov_Quiz;
+using System.Text;
 
-namespace Lab1Tests
+namespace Lab2_Tests
 {
+    
+    
     /// <summary>
-    ///This is a test class for UtilTest and is intended
-    ///to contain all UtilTest Unit Tests
+    ///This is a test class for ZipStorageTest and is intended
+    ///to contain all ZipStorageTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class UtilTest
+    public class ZipStorageTest
     {
+
+
         private TestContext testContextInstance;
 
         /// <summary>
@@ -61,31 +67,19 @@ namespace Lab1Tests
 
 
         /// <summary>
-        ///A test for GCD
+        ///A test for Load
         ///</summary>
         [TestMethod()]
-        public void GCDTest()
+        public void LoadTest()
         {
-            int n = 120; 
-            int d = 250; 
-            int expected = 10;
-            int actual;
-            actual = Util.GCD(n, d);
-            Assert.AreEqual(expected, actual);
-        }
+            Quiz q = Fixture.GetQuiz();
+            byte[] key = Encoding.ASCII.GetBytes("12345678");
+            ZipCryptoStorage zs = new ZipCryptoStorage();
+            zs.DESKey = key;
+            zs.Save(q);
 
-        /// <summary>
-        ///A test for GCF
-        ///</summary>
-        [TestMethod()]
-        public void GCFTest()
-        {
-            int a = 6; 
-            int b = 8; 
-            int expected = 24;
-            int actual;
-            actual = Util.LCM(a, b);
-            Assert.AreEqual(expected, actual);
+            Quiz q2 = zs.Load(q.Title);
+            Assert.AreEqual(q, q2);
         }
     }
 }

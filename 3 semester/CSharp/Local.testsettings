@@ -27,7 +27,9 @@
           <Configuration>
             <CodeCoverage xmlns="">
               <Regular>
-                <CodeCoverageItem binaryFile="Lab1_Pankov_Rational\bin\Debug\Lab1_Pankov_Rational.exe" pdbFile="Lab1_Pankov_Rational\bin\Debug\Lab1_Pankov_Rational.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="Lab1_Pankov_Currency\bin\Debug\Lab1_Pankov_Currency.dll" pdbFile="Lab1_Pankov_Currency\bin\Debug\Lab1_Pankov_Currency.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="Lab1_Pankov_Rational\bin\Debug\Lab1_Pankov_Rational.dll" pdbFile="Lab1_Pankov_Rational\bin\Debug\Lab1_Pankov_Rational.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="Lab2_Pankov_Quiz\bin\Debug\Lab2_Pankov_Quiz.dll" pdbFile="Lab2_Pankov_Quiz\bin\Debug\Lab2_Pankov_Quiz.pdb" instrumentInPlace="true" />
               </Regular>
             </CodeCoverage>
           </Configuration>

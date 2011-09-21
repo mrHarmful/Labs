@@ -1,16 +1,20 @@
-﻿using Lab1_Pankov_Rational;
+﻿using Lab2_Pankov_Quiz;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace Lab1Tests
 {
+    
+    
     /// <summary>
-    ///This is a test class for UtilTest and is intended
-    ///to contain all UtilTest Unit Tests
+    ///This is a test class for AnswerTest and is intended
+    ///to contain all AnswerTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class UtilTest
+    public class AnswerTest
     {
+
+
         private TestContext testContextInstance;
 
         /// <summary>
@@ -61,31 +65,15 @@ namespace Lab1Tests
 
 
         /// <summary>
-        ///A test for GCD
+        ///A test for Equals
         ///</summary>
         [TestMethod()]
-        public void GCDTest()
+        public void EqualsTest()
         {
-            int n = 120; 
-            int d = 250; 
-            int expected = 10;
-            int actual;
-            actual = Util.GCD(n, d);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for GCF
-        ///</summary>
-        [TestMethod()]
-        public void GCFTest()
-        {
-            int a = 6; 
-            int b = 8; 
-            int expected = 24;
-            int actual;
-            actual = Util.LCM(a, b);
-            Assert.AreEqual(expected, actual);
+            Assert.IsTrue(new Answer("asd", true) == new Answer("asd", true));
+            Assert.IsTrue(new Answer("asd", true) != new Answer("asd", false));
+            Assert.IsFalse(new Answer("asd", true).Equals(new DateTime()));
+            Assert.IsTrue(new Answer("asd", true).Equals((Object)new Answer("asd", true)));
         }
     }
 }

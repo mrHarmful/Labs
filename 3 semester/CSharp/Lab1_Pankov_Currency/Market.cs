@@ -35,9 +35,4 @@ namespace Lab1_Pankov_Currency
             return SellRates[from] / BuyRates[to];
         }
     }
-
-    public enum Symbols
-    {
-        EUR, USD, GBP, CAD, AUD
-    };
 }

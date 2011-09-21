@@ -65,17 +65,6 @@ namespace Lab1Tests
 
 
         /// <summary>
-        ///A test for Rational Constructor
-        ///</summary>
-        [TestMethod()]
-        public void RationalConstructorTest()
-        {
-            Rational target = new Rational(1, 2);
-            Assert.AreEqual(target.Numerator, 1);
-            Assert.AreEqual(target.Denominator, 2);
-        }
-
-        /// <summary>
         ///A test for CompareTo
         ///</summary>
         [TestMethod()]
@@ -93,8 +82,14 @@ namespace Lab1Tests
         [TestMethod()]
         public void EqualsTest()
         {
+            Rational x = null;
+            Rational y = new Rational(1, 2);
+            Assert.IsFalse(x == y);
             Assert.IsTrue(new Rational(1, 2) == new Rational(1, 2));
             Assert.IsFalse(new Rational(1, 3) == new Rational(1, 2));
+            Assert.IsFalse(new Rational(1, 2) != new Rational(1, 2));
+            Assert.IsTrue(new Rational(1, 3) != new Rational(1, 2));
+            Assert.IsFalse(new Rational(1, 3).Equals(new DateTime()));
         }
 
 
@@ -107,6 +102,8 @@ namespace Lab1Tests
             Assert.AreEqual<Rational>(new Rational(6, 5), Rational.Parse("1.2"));
             Assert.AreEqual<Rational>(new Rational(3, 100), Rational.Parse("0.03"));
             Assert.AreEqual<Rational>(new Rational(1, 30), Rational.Parse("0.0(3)"));
+            Assert.AreEqual<Rational>(new Rational(2, 1), Rational.Parse("2"));
+            Assert.AreEqual<Rational>(new Rational(3, 100), Rational.Parse("3/100"));
             try
             {
                 Rational.Parse("0.03xgf");
@@ -227,5 +224,95 @@ namespace Lab1Tests
             Assert.AreEqual<Rational>(expected, actual);
         }
 
+
+        /// <summary>
+        ///A test for Rational Constructor
+        ///</summary>
+        [TestMethod()]
+        public void RationalConstructorTest1()
+        {
+            Rational target = new Rational();
+            Assert.AreEqual(target, new Rational(0, 1));
+        }
+
+        /// <summary>
+        ///A test for GetHashCode
+        ///</summary>
+        [TestMethod()]
+        public void GetHashCodeTest()
+        {
+            Assert.AreEqual(new Rational(1, 2).GetHashCode(), new Rational(1, 2).GetHashCode());
+            Assert.AreNotEqual(new Rational(1, 2).GetHashCode(), new Rational(1, 1).GetHashCode());
+        }
+
+        /// <summary>
+        ///A test for op_Division
+        ///</summary>
+        [TestMethod()]
+        public void op_DivisionTest()
+        {
+            Rational a = new Rational(1, 2);
+            Rational b = new Rational(2, 5);
+            Rational expected = new Rational(5, 4);
+            Rational actual;
+            actual = (a / b);
+            Assert.AreEqual<Rational>(expected, actual);
+        }
+
+        /// <summary>
+        ///A test for op_GreaterThan
+        ///</summary>
+        [TestMethod()]
+        public void op_GreaterThanTest()
+        {
+            Rational a = new Rational(1, 2);
+            Rational b = new Rational(1, 3);
+            bool expected = true;
+            bool actual;
+            actual = (a > b);
+            Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        ///A test for op_LessThan
+        ///</summary>
+        [TestMethod()]
+        public void op_LessThanTest()
+        {
+            Rational a = new Rational(2, 3);
+            Rational b = new Rational(1, 2);
+            bool expected = false;
+            bool actual;
+            actual = (a < b);
+            Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        ///A test for op_Implicit
+        ///</summary>
+        [TestMethod()]
+        public void op_ImplicitTest2()
+        {
+            Rational x = new Rational(2, 5);
+            double expected = 2.0 / 5;
+            double actual;
+            actual = x;
+            Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        ///A test for CreateAndVerify
+        ///</summary>
+        [TestMethod()]
+        public void CreateAndVerifyTest()
+        {
+            try
+            {
+                Rational.CreateAndVerify(1, 0);
+                Assert.Fail();
+            }
+            catch { }
+            Rational.CreateAndVerify(1, 1);
+        }
     }
 }

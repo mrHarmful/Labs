@@ -1,16 +1,22 @@
-﻿using Lab1_Pankov_Rational;
+﻿using Lab2_Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
+using System.Threading;
 
-namespace Lab1Tests
+namespace Pankov.Lab2.Tests
 {
+
+
     /// <summary>
-    ///This is a test class for UtilTest and is intended
-    ///to contain all UtilTest Unit Tests
+    ///This is a test class for FileMonitorTest and is intended
+    ///to contain all FileMonitorTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class UtilTest
+    public class FileMonitorTest
     {
+
+
         private TestContext testContextInstance;
 
         /// <summary>
@@ -61,31 +67,31 @@ namespace Lab1Tests
 
 
         /// <summary>
-        ///A test for GCD
+        ///A test for FileMonitor Constructor
         ///</summary>
         [TestMethod()]
-        public void GCDTest()
+        public void FileMonitorConstructorTest()
         {
-            int n = 120; 
-            int d = 250; 
-            int expected = 10;
-            int actual;
-            actual = Util.GCD(n, d);
-            Assert.AreEqual(expected, actual);
-        }
+            bool changed = false, renamed = false;
+            string fn = @"c:\file";
+            string nfn = @"c:\newfile";
+            File.Create(fn).Close();
+            FileMonitor target = new FileMonitor(fn);
 
-        /// <summary>
-        ///A test for GCF
-        ///</summary>
-        [TestMethod()]
-        public void GCFTest()
-        {
-            int a = 6; 
-            int b = 8; 
-            int expected = 24;
-            int actual;
-            actual = Util.LCM(a, b);
-            Assert.AreEqual(expected, actual);
+            target.Changed += delegate(string path, FileSystemEventArgs a) { changed = true; };
+            target.Renamed += delegate(string path, RenamedEventArgs a) { renamed = true; };
+
+            File.WriteAllText(fn, "test");
+            Thread.Sleep(300);
+
+            Assert.IsTrue(changed);
+
+            File.Move(fn, nfn);
+            Thread.Sleep(300);
+
+            Assert.IsTrue(renamed);
+
+            File.Delete(nfn);
         }
     }
 }

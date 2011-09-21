@@ -1,16 +1,20 @@
-﻿using Lab1_Pankov_Rational;
+﻿using Lab2_Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace Lab1Tests
 {
+    
+    
     /// <summary>
-    ///This is a test class for UtilTest and is intended
-    ///to contain all UtilTest Unit Tests
+    ///This is a test class for FileMonitorTest and is intended
+    ///to contain all FileMonitorTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class UtilTest
+    public class FileMonitorTest
     {
+
+
         private TestContext testContextInstance;
 
         /// <summary>
@@ -61,31 +65,14 @@ namespace Lab1Tests
 
 
         /// <summary>
-        ///A test for GCD
+        ///A test for FileMonitor Constructor
         ///</summary>
         [TestMethod()]
-        public void GCDTest()
+        public void FileMonitorConstructorTest()
         {
-            int n = 120; 
-            int d = 250; 
-            int expected = 10;
-            int actual;
-            actual = Util.GCD(n, d);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for GCF
-        ///</summary>
-        [TestMethod()]
-        public void GCFTest()
-        {
-            int a = 6; 
-            int b = 8; 
-            int expected = 24;
-            int actual;
-            actual = Util.LCM(a, b);
-            Assert.AreEqual(expected, actual);
+            string path = string.Empty; // TODO: Initialize to an appropriate value
+            FileMonitor target = new FileMonitor(path);
+            Assert.Inconclusive("TODO: Implement code to verify target");
         }
     }
 }

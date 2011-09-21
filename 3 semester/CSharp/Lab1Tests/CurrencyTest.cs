@@ -112,8 +112,12 @@ namespace Lab1Tests
         {
             Assert.IsTrue(new Currency(Symbols.USD, 2).Equals(new Currency(Symbols.USD, 2)));
             Assert.IsFalse(new Currency(Symbols.USD, 3).Equals(new Currency(Symbols.USD, 2)));
+            Assert.IsFalse(new Currency(Symbols.USD, 3).Equals(new DateTime()));
             Assert.IsTrue(new Currency(Symbols.USD, 2) == new Currency(Symbols.USD, 2));
             Assert.IsFalse(new Currency(Symbols.USD, 3) == new Currency(Symbols.USD, 2));
+            Assert.IsFalse(new Currency(Symbols.USD, 3) == null);
+            Assert.IsFalse(new Currency(Symbols.USD, 2) != new Currency(Symbols.USD, 2));
+            Assert.IsTrue(new Currency(Symbols.USD, 3) != new Currency(Symbols.USD, 2));
         }
 
         /// <summary>
@@ -213,6 +217,36 @@ namespace Lab1Tests
             Currency actual;
             actual = (a - b);
             Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        ///A test for Parse
+        ///</summary>
+        [TestMethod()]
+        public void ParseTest()
+        {
+            string s = "CAD 123";
+            Currency expected = new Currency(Symbols.CAD, 123M);
+            Currency actual;
+            actual = Currency.Parse(s);
+            Assert.AreEqual(expected, actual);
+
+            try
+            {
+                Currency.Parse("ololo");
+                Assert.Fail();
+            }
+            catch { }
+        }
+
+        /// <summary>
+        ///A test for GetHashCode
+        ///</summary>
+        [TestMethod()]
+        public void GetHashCodeTest()
+        {
+            Assert.AreNotEqual(new Currency(Symbols.CAD, 2).GetHashCode(), new Currency(Symbols.USD, 3).GetHashCode()); 
+            Assert.AreEqual(new Currency(Symbols.CAD, 2).GetHashCode(), new Currency(Symbols.CAD, 2).GetHashCode());
         }
     }
 }

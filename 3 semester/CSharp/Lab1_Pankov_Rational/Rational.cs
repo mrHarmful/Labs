@@ -20,6 +20,7 @@ namespace Lab1_Pankov_Rational
             Denominator = 1;
         }
 
+
         /// <summary>
         /// Construct rational with given numerator and denominator
         /// </summary>
@@ -32,14 +33,25 @@ namespace Lab1_Pankov_Rational
         }
 
         /// <summary>
+        /// Construct rational with given numerator and denominator, checking for zero denominator
+        /// </summary>
+        /// <param name="n">Numerator</param>
+        /// <param name="d">Denominator</param>
+        public static Rational CreateAndVerify(int n, int d)
+        {
+            if (d == 0) return null;
+            return new Rational(n, d);
+        }
+
+        /// <summary>
         /// Compares this rational against another one
         /// </summary>
         /// <param name="other">Other rational</param>
         /// <returns>Comparison result</returns>
         public int CompareTo(Rational other)
         {
-            int gcf = Util.GCF(Denominator, other.Denominator);
-            return (Numerator * gcf / Denominator).CompareTo(other.Numerator * gcf / other.Denominator);
+            int lcm = Util.LCM(Denominator, other.Denominator);
+            return (Numerator * lcm / Denominator).CompareTo(other.Numerator * lcm / other.Denominator);
         }
 
         /// <summary>
@@ -59,10 +71,8 @@ namespace Lab1_Pankov_Rational
         /// <returns>Equity status</returns>
         public override bool Equals(object obj)
         {
-            if (obj is Rational)
-                return Equals((Rational)obj);
-            else
-                return false;
+            if (!(obj is Rational)) return false;
+            return Equals((Rational)obj);
         }
 
         /// <summary>
@@ -87,8 +97,8 @@ namespace Lab1_Pankov_Rational
 
         public static Rational operator +(Rational a, Rational b)
         {
-            int gcf = Util.GCF(a.Denominator, b.Denominator);
-            return new Rational(a.Numerator * gcf / a.Denominator + b.Numerator * gcf / b.Denominator, gcf).Reduce();
+            int lcm = Util.LCM(a.Denominator, b.Denominator);
+            return new Rational(a.Numerator * lcm / a.Denominator + b.Numerator * lcm / b.Denominator, lcm).Reduce();
         }
 
         public static Rational operator -(Rational x)
@@ -111,24 +121,32 @@ namespace Lab1_Pankov_Rational
             return new Rational(a.Numerator * b.Denominator, a.Denominator * b.Numerator).Reduce();
         }
 
+        //private static bool Equals(Rational a, Rational b)
+        //{
+        //    EqualityComparer<Rational>.Default.Equals(a, b);
+        //}
+
         public static bool operator ==(Rational a, Rational b)
         {
+            //return Equals(a, b);
+            if ((object)a == null || (object)b == null) return false;
             return a.Equals(b);
         }
 
         public static bool operator !=(Rational a, Rational b)
         {
-            return !a.Equals(b);
+            if ((object)a == null || (object)b == null) return false;
+            return !(a == b);
         }
 
         public static bool operator >(Rational a, Rational b)
         {
-            return a.CompareTo(b) == 1;
+            return a.CompareTo(b) > 0;
         }
 
         public static bool operator <(Rational a, Rational b)
         {
-            return a.CompareTo(b) == -1;
+            return a.CompareTo(b) < 0;
         }
         #endregion
 
@@ -146,7 +164,7 @@ namespace Lab1_Pankov_Rational
 
         public static implicit operator double(Rational x)
         {
-            return x.Numerator / x.Denominator;
+            return ((double)x.Numerator) / x.Denominator;
         }
         #endregion
 

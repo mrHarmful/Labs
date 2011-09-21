@@ -7,9 +7,15 @@ namespace Lab1_Pankov_Rational
 {
     public static class Util
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="n">n >= 0</param>
+        /// <param name="d">d >= 0</param>
+        /// <returns></returns>
         public static int GCD(int n, int d)
         {
-            while (n * d > 0)
+            while (n!= 0 && d != 0)
                 if (n > d)
                     n %= d;
                 else
@@ -17,7 +23,7 @@ namespace Lab1_Pankov_Rational
             return n + d;
         }
 
-        public static int GCF(int a, int b)
+        public static int LCM(int a, int b)
         {
             return a * b / GCD(a, b);
         }

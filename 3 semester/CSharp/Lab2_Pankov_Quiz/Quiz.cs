@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lab1_Pankov_Rational
+namespace Lab2_Pankov_Quiz
 {
-    class Program
+    public class Quiz : QuizItemContainer
     {
-        static void Main(string[] args)
-        {
-        }
+        public string Title { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lab1_Pankov_Currency
 {
@@ -45,7 +46,7 @@ namespace Lab1_Pankov_Currency
 
         public override int GetHashCode()
         {
-            return Amount.GetHashCode() + Symbol.GetHashCode();
+            return this.ToString().GetHashCode();
         }
 
         public override string ToString()
@@ -53,6 +54,16 @@ namespace Lab1_Pankov_Currency
             return String.Format("{0} {1:0.00}", Symbol, Amount);
         }
         #endregion
+
+        public static Currency Parse(string s)
+        {
+            if (Regex.IsMatch(s, @"\w{3} [.\d]+"))
+            { 
+                string[] parts = s.Split();
+                return new Currency((Symbols)Enum.Parse(typeof(Symbols), parts[0]), decimal.Parse(parts[1]));
+            }
+            throw new FormatException("Invalid format");
+        }
 
         #region Math
         public static Currency operator +(Currency a, Currency b)
@@ -87,6 +98,7 @@ namespace Lab1_Pankov_Currency
 
         public static bool operator ==(Currency a, Currency b)
         {
+            if ((object)a == null || (object)b == null) return false;
             return a.Equals(b);
         }
 
