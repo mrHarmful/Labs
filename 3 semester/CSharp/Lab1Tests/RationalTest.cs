@@ -1,8 +1,8 @@
-﻿using Lab1_Pankov_Rational;
+﻿using Pankov.Lab1.RationalLab;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Lab1Tests
+namespace Pankov.Lab2.Tests
 {
 
 

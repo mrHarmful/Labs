@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lab1_Pankov_Rational
+namespace Pankov.Lab1.RationalLab
 {
     public static class Util
     {

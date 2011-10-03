@@ -3,16 +3,27 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
-namespace Lab2_Pankov_Quiz
+namespace Pankov.Lab2.Quiz
 {
+    [Serializable]
+    [DataContract]
     public class QuizItemContainer : QuizItem, IEnumerable
     {
+        [DataMember]
+        [XmlArray("Items")]
         public List<QuizItem> Items { get; private set; }
 
         public QuizItemContainer()
         {
             Items = new List<QuizItem>();
+        }
+
+        public void Add(object i)
+        {
+            Items.Add((QuizItem)i);
         }
 
         public override bool IsAnswered()

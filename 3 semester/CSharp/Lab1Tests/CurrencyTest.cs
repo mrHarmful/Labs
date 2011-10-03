@@ -1,8 +1,8 @@
-﻿using Lab1_Pankov_Currency;
+﻿using Pankov.Lab1.CurrencyLab;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Lab1Tests
+namespace Pankov.Lab1.Tests
 {
 
 

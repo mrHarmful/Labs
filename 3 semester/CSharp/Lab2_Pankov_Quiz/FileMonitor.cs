@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Lab2_Tests
+namespace Pankov.Lab2.Quiz
 {
     public class FileMonitor : IDisposable
     {

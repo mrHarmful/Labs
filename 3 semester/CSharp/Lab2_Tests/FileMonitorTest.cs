@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Threading;
+using Pankov.Lab2.Quiz;
 
 namespace Pankov.Lab2.Tests
 {
@@ -73,8 +74,8 @@ namespace Pankov.Lab2.Tests
         public void FileMonitorConstructorTest()
         {
             bool changed = false, renamed = false;
-            string fn = @"c:\file";
-            string nfn = @"c:\newfile";
+            string fn = @"c:\file.txt";
+            string nfn = @"c:\newfile.txt";
             File.Create(fn).Close();
             FileMonitor target = new FileMonitor(fn);
 

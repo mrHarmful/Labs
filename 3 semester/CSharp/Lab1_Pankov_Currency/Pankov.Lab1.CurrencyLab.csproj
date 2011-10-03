@@ -8,7 +8,7 @@
     <ProjectGuid>{21CAE858-F714-41F5-9032-CDE66EE3F250}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lab1_Pankov_Currency</RootNamespace>
+    <RootNamespace>Pankov.Lab1.CurrencyLab</RootNamespace>
     <AssemblyName>Lab1_Pankov_Currency</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

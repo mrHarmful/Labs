@@ -9,7 +9,7 @@
     <ProjectGuid>{787D4150-0105-4AD8-9B7F-AA9DEFD59BAA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lab1Tests</RootNamespace>
+    <RootNamespace>Pankov.Lab2.Tests</RootNamespace>
     <AssemblyName>Lab1Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -50,21 +50,19 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnswerTest.cs" />
     <Compile Include="CurrencyTest.cs" />
-    <Compile Include="FileMonitorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RationalTest.cs" />
     <Compile Include="UtilTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lab1_Pankov_Currency\Lab1_Pankov_Currency.csproj">
+    <ProjectReference Include="..\Lab1_Pankov_Currency\Pankov.Lab1.CurrencyLab.csproj">
       <Project>{21CAE858-F714-41F5-9032-CDE66EE3F250}</Project>
-      <Name>Lab1_Pankov_Currency</Name>
+      <Name>Pankov.Lab1.CurrencyLab</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lab1_Pankov_Rational\Lab1_Pankov_Rational.csproj">
+    <ProjectReference Include="..\Lab1_Pankov_Rational\Pankov.Lab1.RationalLab.csproj">
       <Project>{2A5475F5-0ED6-43B8-9F5A-6CDB4B31B78B}</Project>
-      <Name>Lab1_Pankov_Rational</Name>
+      <Name>Pankov.Lab1.RationalLab</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lab2_Pankov_Quiz\Pankov.Lab2.Quiz.csproj">
       <Project>{385808E1-B36E-4444-AF7A-5D7D77C263C4}</Project>

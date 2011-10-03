@@ -6,7 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 
-namespace Lab2_Pankov_Quiz.Storage
+namespace Pankov.Lab2.Quiz.Storage
 {
     public class ZipCryptoStorage : BaseQuizStorage
     {

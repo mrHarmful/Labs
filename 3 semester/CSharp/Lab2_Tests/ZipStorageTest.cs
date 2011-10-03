@@ -1,7 +1,7 @@
-﻿using Lab2_Pankov_Quiz.Storage;
+﻿using Pankov.Lab2.Quiz.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Lab2_Pankov_Quiz;
+using Pankov.Lab2.Quiz;
 using System.Text;
 
 namespace Lab2_Tests

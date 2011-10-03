@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lab1_Pankov_Currency
+namespace Pankov.Lab1.CurrencyLab
 {
     public static class Market
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lab1_Pankov_Rational
+namespace Pankov.Lab1.RationalLab
 {
     public class Rational : IComparable<Rational>, IEquatable<Rational>
     {
@@ -135,7 +135,6 @@ namespace Lab1_Pankov_Rational
 
         public static bool operator !=(Rational a, Rational b)
         {
-            if ((object)a == null || (object)b == null) return false;
             return !(a == b);
         }
 

@@ -1,4 +1,4 @@
-﻿using Lab2_Pankov_Quiz;
+﻿using Pankov.Lab2.Quiz;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 

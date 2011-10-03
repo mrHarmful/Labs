@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
-namespace Lab2_Pankov_Quiz
+namespace Pankov.Lab2.Quiz
 {
+    [Serializable]
+    [DataContract]
     public class Answer : IEquatable<Answer>
     {
+        [DataMember]
         public bool Correct { get; private set; }
         public bool Selected { get; set; }
+        [DataMember]
         public string Text { get; private set; }
 
         public Answer(string text, bool correct)

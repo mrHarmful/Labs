@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lab1_Pankov_Currency
+namespace Pankov.Lab1.CurrencyLab
 {
     public class Currency : IComparable<Currency>, IEquatable<Currency>
     {

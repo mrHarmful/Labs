@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
-namespace Lab2_Pankov_Quiz
+namespace Pankov.Lab2.Quiz
 {
+    [Serializable]
+    [DataContract]
     public abstract class QuizItem : IEquatable<QuizItem>
     {
         public abstract bool IsAnswered();
@@ -15,6 +18,5 @@ namespace Lab2_Pankov_Quiz
 
         public static bool operator ==(QuizItem a, QuizItem b) { return a.Equals(b); }
         public static bool operator !=(QuizItem a, QuizItem b) { return !(a == b); }
-
     }
 }

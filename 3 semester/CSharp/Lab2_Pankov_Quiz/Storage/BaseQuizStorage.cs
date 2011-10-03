@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace Lab2_Pankov_Quiz.Storage
+namespace Pankov.Lab2.Quiz.Storage
 {
    public abstract class BaseQuizStorage
     {

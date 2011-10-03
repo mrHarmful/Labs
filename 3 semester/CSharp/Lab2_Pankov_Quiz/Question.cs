@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
-namespace Lab2_Pankov_Quiz
+namespace Pankov.Lab2.Quiz
 {
+    [Serializable]
+    [DataContract]
     public class Question : QuizItem, IEnumerable
     {
+        [DataMember]
+        [XmlArray("Answers")]
         public List<Answer> Answers { get; private set; }
+        [DataMember]
         public bool Multichoice { get; private set; }
+        [DataMember]
         public string Text { get; private set; }
 
         public Question(string text, bool multichoice)
@@ -17,6 +25,11 @@ namespace Lab2_Pankov_Quiz
             Multichoice = multichoice;
             Text = text;
             Answers = new List<Answer>();
+        }
+
+        public void Add(object i)
+        {
+            Answers.Add((Answer)i);
         }
 
         public void SelectAnswer(int idx)

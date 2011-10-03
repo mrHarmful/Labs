@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Lab2_Pankov_Quiz;
+using Pankov.Lab2.Quiz;
 
 namespace Lab2_Tests
 {
@@ -16,12 +16,12 @@ namespace Lab2_Tests
             qe1.Answers.AddRange(new List<Answer> { new Answer("A1", false), new Answer("A2", true) });
             Question qe2 = new Question("Q2", true);
             qe2.Answers.AddRange(new List<Answer> { new Answer("A1", false), new Answer("A2", true), new Answer("A3", true) });
-            q1.Items.Add(qe1);
-            q1.Items.Add(qe2);
+            q1.Add(qe1);
+            q1.Add(qe2);
             Question qe3 = new Question("Q2", true);
             qe3.Answers.AddRange(new List<Answer> { new Answer("A1", true), new Answer("A2", true), new Answer("A3", false) });
-            q.Items.Add(q1);
-            q.Items.Add(qe3);
+            q.Add(q1);
+            q.Add(qe3);
 
             q.Title = "Test";
             return q;
