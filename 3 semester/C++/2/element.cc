@@ -5,4 +5,6 @@ using namespace std;
 
 Element::Element() { }
 Element::~Element() { }
-void Element::print() { cout << "<Element>" << endl; }
+Element* Element::clone() { return NULL; }
+void Element::print() { }
+void Element::dump() { cout << "<Element>" << endl; }

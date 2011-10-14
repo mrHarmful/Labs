@@ -6,7 +6,9 @@
 class Headline : public Text {
 	public:
 		Headline(char*);
+		virtual Headline* clone();
 		virtual void print();
+		virtual void dump();
 };
 
 #endif

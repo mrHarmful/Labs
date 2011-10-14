@@ -10,7 +10,9 @@ using namespace std;
 class Document {
 	public:
 		Document();
+		Document(Document*);
 		void 	  print();
+		void 	  dump();
 		void      push(Element*);
 		~Document();
 	private:

@@ -6,6 +6,7 @@ SOURCES = \
 	document.o \
 	headline.o \
 	element.o \
+	line.o \
 	text.o \
 
 all: $(SOURCES) link

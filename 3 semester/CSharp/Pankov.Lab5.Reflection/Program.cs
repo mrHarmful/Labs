@@ -26,16 +26,19 @@ namespace Pankov.Lab5.Reflection
                     string mods = "";
                     if (t.IsPublic) mods += "public ";
                     else if (t.IsNotPublic) mods += "private ";
-                    else mods += "intern ";
+                    else mods += "internal ";
                     if (t.IsSealed) mods += "sealed ";
-                    if (t.IsAbstract) mods += "abstr ";
+                    if (t.IsAbstract && !t.IsInterface) mods += "abstract ";
                     if (t.IsClass) mods += "class ";
                     if (t.IsEnum) mods += "enum ";
                     if (t.IsInterface) mods += "interface ";
-                    res += String.Format("|- {0}{1}\n", mods, t.Name);
+                    res += String.Format("|\n|- {0}{1}\n", mods, t.Name);
+
+                    bool hasMethods = false;
                     foreach (MethodInfo mi in t.GetMethods())
                         if (mi.DeclaringType == t)
                         {
+                            hasMethods = true;
                             string n = mi.Name;
                             string mmods = "";
                             if (mi.IsPublic) mmods += "public ";
@@ -47,8 +50,10 @@ namespace Pankov.Lab5.Reflection
                             List<string> prms = new List<string>();
                             foreach (ParameterInfo pi in mi.GetParameters())
                                 prms.Add(pi.ParameterType.Name);
-                            res += String.Format("\t|- {0}{1} {2}({3})\n", mmods, mi.ReturnType.Name, n, string.Join(", ", prms));
+                            res += String.Format("|\t|- {0}{1} {2}({3})\n", mmods, mi.ReturnType.Name, n, string.Join(", ", prms));
                         }
+                    if (hasMethods)
+                        res += "|\t-\n";
                 }
             }
             return res;
