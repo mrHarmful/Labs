@@ -1,3 +1,7 @@
+typedef void (*Iterator)(void*);
+
+
+// Single item
 template <class T>
 class LinkedListEntry {
 public:
@@ -6,7 +10,7 @@ public:
 };
 
 
-
+// Iterator
 template <class T>
 class LinkedListIter {
 public:
@@ -34,7 +38,7 @@ private:
 };
 
 
-
+// List itself
 template <class T>
 class LinkedList {
 public:
@@ -50,6 +54,7 @@ public:
         return new LinkedListIter<T>(root);
     }
 
+    // Get element by index
     T get(int idx) {
         LinkedListEntry<T>* p = root;
         for (int i = 0; i < idx; i++)
@@ -57,6 +62,7 @@ public:
         return p->value;
     }
 
+    // List length
     int length() {
         LinkedListEntry<T>* p = root;
         int r = 0;
@@ -65,6 +71,7 @@ public:
         return r;
     }
 
+    // Find element's index
     int find(T val) {
         LinkedListEntry<T>* p = root;
         int r = 0;
@@ -76,6 +83,16 @@ public:
         return -1;
     }
 
+    // Apply function to each element
+    void each(Iterator f) {
+        LinkedListEntry<T>* p = root;
+        while (p) {
+            f(p);
+            p = p->next;
+        }
+    }
+
+    // Insert element into place
     void insert(T val, int idx) {
         LinkedListEntry<T>* i = new LinkedListEntry<T>();
         i->value = val;
@@ -95,6 +112,7 @@ public:
         }
     }
 
+    // Remove element by index
     T remove(int idx) {
         if (idx < 0)
             return (T)0;
@@ -121,11 +139,12 @@ public:
         return ret;
     }
 
+    // Remove element by value
     T remove (T val) {
         return remove(find(val));
     }
 
-
+    // Insert element to end
     void insertLast(T val) {
         insert(val, length());
     }
