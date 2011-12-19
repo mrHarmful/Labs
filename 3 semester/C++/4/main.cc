@@ -1,31 +1,41 @@
 #include <iostream>
-#include <stdlib.h>
-#include "matrix.cc"
+#include <document.cc>
+#include <fstream>
+#include "stdio.h"
+#include "line.h"
+#include "headline.h"
+#include "text.h"
 
 using namespace std;
 
-
-template <typename T>
-Matrix<T>* randomize(Matrix<T>* d) {
-	for (int x = 0; x < d->width; x++)
-		for (int y = 0; y < d->height; y++)
-			(*d)[x][y] = rand() % 10;
-	return d;
-}
-
 int main() {
-	Matrix<int>* a = randomize(new Matrix<int>(3,3));
-	Matrix<int>* b = randomize(new Matrix<int>(3,3));
-	Matrix<int>* c = (*a) - b;
+	cout << "Writing to log.txt\n";
 
-	cout << endl << "A" << endl;
-	a->print();
+	freopen("log.txt", "w", stdout);
 
-	cout << endl << "B" << endl;
-	b->print();
+    Document* d = new Document();
+    (*d) += new Headline("Header");
+    (*d) += new Text("Lorem ipsum");
+    (*d) += new Text("dolor sit amet.");
+    (*d) += new Line();
+    (*d) += new Text("More text");
+    (*d) += new Text("here");
 
-	cout << endl << "A-B" << endl;
-	c->print();
+    cout << "Document:\n";
 
-	return 0;
+    d->print();
+
+    cout << "\nRemoving all text\n";
+
+    d->remove(1);
+    d->remove(1);
+    d->remove(2);
+    d->remove(2);
+
+    d->print();
+
+    cout << "\nElement #1 is: \n";
+    (*d)[0]->print();
+
+    fclose(stdout);
 }
