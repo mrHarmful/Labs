@@ -1,4 +1,5 @@
 from copy import deepcopy
+import sys
 
 def mprint(m):
 	for l in m:
@@ -73,6 +74,7 @@ B = [
 	4.2, 4.2, 4.2, 4.2, 4.2
 ]
 
+
 K = 1
 
 try:
@@ -99,28 +101,59 @@ for xi in range(0, len(A) - 1):
 
 	lswap(A, xi, mi)
 	for l in range(xi+1, len(A)):
-		A[l] = lsum(A[l], lmul(A[xi], -A[l][xi]/A[xi][xi]))
+		try:
+			A[l] = lsum(A[l], lmul(A[xi], -A[l][xi]/A[xi][xi]))
+		except:
+			if A[l][-1] != 0:
+				print 'No solutions'
+				sys.exit(0)
 
 print 
 print 
 mprint(A)
 
 X = [0] * len(A)
+T = [1] * len(A)
+inf = False
 
 print 'Reverse pass',
 for i in range(len(A)-1, -1, -1):
 	print '.',
-	X[i] = A[i][-1] / A[i][i]
-	for j in range(0, i):
-		A[j][-1] -= A[j][i] * X[i]
+	try:
+		X[i] = A[i][-1] / A[i][i]
+		for j in range(0, i):
+			A[j][-1] -= A[j][i] * X[i]
+	except:
+		if A[i][-1] != 0:
+			print 'No solutions'
+			sys.exit(0)
+		X[i] = 0
+		s = 0
+		for j in range(0,len(A)):
+			if j != i:
+				s += A[0][j]
+		for j in range(0,len(A)):
+			if j != i:
+				T[j] = s / A[0][j]
+		T[i] = -1
+		inf = True
+		print '(Infinite solutions found!)'
+
+if inf:
+	for j in range(0,len(A)):
+		X[j] = '%.4f'%X[j] + ' + t * %.4f'%T[j]
+
 print 
 print
-print 'Result:\n', '\n'.join('X%i = %.4f'%(i+1, X[i]) for i in range(0,len(A)))
+print 'Result:\n', '\n'.join('X%i = %s'%(i+1, (X[i] if isinstance(X[i],str) else '%.4f'%X[i])) for i in range(0,len(A)))
 
 print '\nVerification pass'
 A = _A
 for i in range(0, len(A)):
 	s = 0
 	for j in range(0, len(A)):
-		s += A[i][j] * X[j]
+		try:
+			s += A[i][j] * X[j]
+		except:
+			pass
 	print 'B%i = %.4f'%(i+1,s)
