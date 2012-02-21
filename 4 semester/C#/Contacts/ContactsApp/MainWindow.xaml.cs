@@ -32,9 +32,9 @@ namespace ContactsApp
             Controller.LoadContactList();
         }
 
-        private void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        internal void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Controller.SelectContact((int)((listBox.SelectedItem as FrameworkElement).Tag));
+            Controller.SelectContact((int)(((sender as ListBox).SelectedItem as FrameworkElement).Tag));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

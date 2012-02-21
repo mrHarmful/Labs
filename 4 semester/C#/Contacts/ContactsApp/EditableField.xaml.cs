@@ -19,8 +19,9 @@ namespace ContactsApp
     /// </summary>
     public partial class EditableField : UserControl
     {
-        public delegate void OnChanged(EditableField sender, string value);
-        public event OnChanged Changed = delegate { };
+        public event Action<EditableField, string> Changed = delegate { };
+        public event Action<EditableField> Deleted;
+        public bool Deletable = true;
 
         public EditableField()
         {
@@ -31,13 +32,18 @@ namespace ContactsApp
         {
             Label.Visibility = System.Windows.Visibility.Collapsed;
             TextBox.Visibility = System.Windows.Visibility.Visible;
+            if (Deletable)
+                Delete.Visibility = System.Windows.Visibility.Visible;
             TextBox.Text = Label.Content as string;
+            TextBox.SelectAll();
+            TextBox.Focus();
         }
 
         private void Hide()
         {
             Label.Visibility = System.Windows.Visibility.Visible;
             TextBox.Visibility = System.Windows.Visibility.Collapsed;
+            Delete.Visibility = System.Windows.Visibility.Collapsed;
         }
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
@@ -50,6 +56,11 @@ namespace ContactsApp
             }
             if (e.Key == Key.Escape)
                 Hide();
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            Deleted(this);
         }
     }
 }

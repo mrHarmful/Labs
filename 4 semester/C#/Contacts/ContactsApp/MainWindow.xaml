@@ -81,14 +81,15 @@
         </Grid>
 
         <ScrollViewer Grid.Column="0" Grid.Row="3">
-            <ListBox Name="listBox" BorderThickness="0" SelectionChanged="listBox_SelectionChanged" />
+            <StackPanel Name="listBox" />
         </ScrollViewer>
 
         <StackPanel Grid.Column="1" Grid.Row="3">
-            <Label FontWeight="Bold" FontSize="20" Name="CurrentContactName" />
-            <StackPanel Name="ContactDetails" />
+            <StackPanel Name="ContactDetails" Margin="0,10,0,0" />
+            
             <Button Name="AddDetailButton" HorizontalAlignment="Right" Margin="10" Click="AddDetailButton_Click">Add...</Button>
-            <Popup Name="AddDetailPopup" Placement="Mouse"  StaysOpen="False" PopupAnimation="Slide" AllowsTransparency="True" HorizontalAlignment="Right" Margin="10">
+            
+            <Popup Name="AddDetailPopup" Placement="Mouse"  StaysOpen="False" PopupAnimation="Slide" AllowsTransparency="True" HorizontalAlignment="Right">
                 <Border BorderThickness="1" BorderBrush="Gray" Background="LightGray" CornerRadius="5">
                     <Grid>
                         <Grid.RowDefinitions>

@@ -42,7 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContactList.cs" />
+    <Compile Include="Entities\ContactGroup.cs" />
+    <Compile Include="Entities\ContactList.cs" />
     <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\ContactDetail.cs" />
     <Compile Include="Entities\ContactEntry.cs" />
