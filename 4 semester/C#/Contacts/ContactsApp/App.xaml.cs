@@ -153,6 +153,7 @@ namespace ContactsApp
         public void ef_Changed(EditableField sender, string value)
         {
             (sender.Tag as SimpleContactDetail).Content = value;
+            FillContactListbox();
             FillDetails();
         }
 
@@ -162,7 +163,7 @@ namespace ContactsApp
             foreach (ContactGroup g in ContactList.Groups)
             {
                 Expander exp = new Expander();
-                exp.Header = (g.Name != null) ? g.Name : "Other";
+                exp.Header = (g.Name != null) ? g.Name : "Ungrouped";
                 exp.IsExpanded = true;
                 mainWindow.listBox.Children.Add(exp);
 

@@ -72,6 +72,7 @@ namespace ContactsApp
         private void NewButton_Click(object sender, RoutedEventArgs e)
         {
             Controller.NewContactList();
+            AddDetailPopup.IsOpen = false;
         }
 
         private void AddDetail_Click(object sender, RoutedEventArgs e)
