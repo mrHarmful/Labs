@@ -13,9 +13,6 @@ namespace ContactsLib.Entities
         public string Name { get; set; }
 
         [DataMember]
-        public string Group { get; set; }
-
-        [DataMember]
         public List<ContactDetail> Details = new List<ContactDetail>();
 
         public Contact(string name)

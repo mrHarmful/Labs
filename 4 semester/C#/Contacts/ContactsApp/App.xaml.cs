@@ -10,6 +10,7 @@ using ContactsLib.StorageBackends;
 using ContactsLib.Entities;
 using System.Windows.Documents;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ContactsApp
 {
@@ -25,7 +26,7 @@ namespace ContactsApp
             FileName = null;
             ContactList = new ContactList();
             FillContactListbox();
-            SelectContact(-1);
+            SelectContact(null);
         }
 
         public bool LoadContactList()
@@ -36,9 +37,9 @@ namespace ContactsApp
             {
                 try
                 {
-                    ContactList = ContactList.Load<XMLStorageBackend>(ofd.FileName);
+                    ContactList = new XMLStorageBackend().Load(ofd.FileName);
                     FillContactListbox();
-                    SelectContact(-1);
+                    SelectContact(null);
                     FileName = ofd.FileName;
                     return true;
                 }
@@ -61,7 +62,7 @@ namespace ContactsApp
                 FileName = sfd.FileName;
             }
 
-            ContactList.Store<XMLStorageBackend>(FileName);
+            new XMLStorageBackend().Store(ContactList, FileName);
             return true;
         }
 
@@ -72,15 +73,11 @@ namespace ContactsApp
             NewContactList();
         }
 
-        public void SelectContact(int id)
+        public void SelectContact(Contact c)
         {
-            if (id == -1)
-                CurrentContact = null;
-            else
-                CurrentContact = ContactList[id];
-
+            CurrentContact = c;
             FillDetails();
-            mainWindow.AddDetailButton.Visibility = (id == -1) ? Visibility.Collapsed : Visibility.Visible;
+            mainWindow.AddDetailButton.Visibility = (c == null) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public void FillDetails()
@@ -102,12 +99,20 @@ namespace ContactsApp
             ll.Content = "Group";
             ll.FontWeight = FontWeights.Bold;
             mainWindow.ContactDetails.Children.Add(ll);
-            EditableField eff = new EditableField();
+
+            ComboBox cbx = new ComboBox();
+            cbx.IsEditable = true;
+            cbx.KeyUp += ContactGroup_Changed;
+            cbx.Text = ContactList.GetGroupOf(CurrentContact).Name;
+            cbx.ItemsSource = ContactList.Groups;
+            mainWindow.ContactDetails.Children.Add(cbx);
+
+            /*EditableField eff = new EditableField();
             eff.Changed += ContactGroup_Changed;
             eff.Label.Content = CurrentContact.Group;
             eff.Tag = CurrentContact;
             eff.Deletable = false;
-            mainWindow.ContactDetails.Children.Add(eff);
+            mainWindow.ContactDetails.Children.Add(eff);*/
 
             if (CurrentContact.Details == null)
                 CurrentContact.Details = new List<ContactDetail>();
@@ -134,12 +139,17 @@ namespace ContactsApp
             FillDetails();
         }
 
-        void ContactGroup_Changed(EditableField sender, string value)
+        void ContactGroup_Changed(object sender, KeyEventArgs args)
         {
-            Contact c = sender.Tag as Contact;
-            c.Group = value;
-            FillContactListbox();
-            FillDetails();
+            if (args.Key == Key.Enter)
+            {
+                ContactGroup g = new ContactGroup(((ComboBox)sender).Text);
+                g.Contacts.Add(CurrentContact);
+                ContactList.Remove(CurrentContact);
+                ContactList.Groups.Add(g);
+                FillContactListbox();
+                FillDetails();
+            }
         }
 
         void ContactName_Changed(EditableField sender, string value)
@@ -172,27 +182,26 @@ namespace ContactsApp
                 lbx.BorderThickness = new Thickness(0);
                 exp.Content = lbx;
 
-                foreach (Contact c in ContactList.Sorted)
-                    if (c.Group == g.Name)
+                foreach (Contact c in g.Sorted)
+                {
+                    ContactListItem i = new ContactListItem();
+                    i.PersonName.Content = c.Name;
+                    i.PersonName.FontWeight = FontWeights.Bold;
+                    try
                     {
-                        ContactListItem i = new ContactListItem();
-                        i.PersonName.Content = c.Name;
-                        i.PersonName.FontWeight = FontWeights.Bold;
-                        try
-                        {
-                            i.Description.Content = c.Details[0].Content;
-                        }
-                        catch { }
-                        i.Tag = ContactList.Contacts.IndexOf(c);
-                        lbx.Items.Add(i);
+                        i.Description.Content = c.Details[0].Content;
                     }
+                    catch { }
+                    i.Tag = c;
+                    lbx.Items.Add(i);
+                }
             }
         }
 
         public void CreateContact(string name)
         {
             Contact c = new Contact(name);
-            ContactList.Add(c);
+            ContactList.DefaultGroup.Contacts.Add(c);
             FillContactListbox();
         }
 
@@ -205,7 +214,7 @@ namespace ContactsApp
         public void RemoveContact()
         {
             ContactList.Remove(CurrentContact);
-            SelectContact(-1);
+            SelectContact(null);
             FillContactListbox();
         }
     }

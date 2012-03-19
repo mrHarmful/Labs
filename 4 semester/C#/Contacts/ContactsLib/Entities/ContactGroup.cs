@@ -2,34 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace ContactsLib.Entities
 {
+    [DataContract]
     public class ContactGroup : IEnumerable<Contact>
     {
-        private string name;
-        public string Name
+        [DataMember]
+        public string Name;
+        
+        [DataMember]
+        public List<Contact> Contacts = new List<Contact>();
+
+        public IEnumerable<Contact> Sorted
         {
             get
             {
-                return name;
-            }
-            set
-            {
-                name = value;
-                foreach (Contact c in this)
-                    c.Group = value;
+                List<Contact> ll = new List<Contact>();
+                ll.AddRange(Contacts);
+                ll.Sort();
+                return ll;
             }
         }
 
-        internal List<Contact> Contacts = new List<Contact>();
-
-        internal ContactGroup(string name)
+        public ContactGroup(string name)
         {
-            this.name = name;
+            Name = name;
         }
 
-        #region IEnumrable
+        #region IEnumerable
         public IEnumerator<Contact> GetEnumerator()
         {
             return Contacts.GetEnumerator();
@@ -40,5 +42,10 @@ namespace ContactsLib.Entities
             return Contacts.GetEnumerator();
         }
         #endregion
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -3,6 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Icon="Icons/document-save.png"
         Title="Contacts" Height="350" Width="525">
+    <Window.Resources>
+        <ResourceDictionary Source="Styles.xaml" />
+    </Window.Resources>
     <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,34 +20,34 @@
         
         <ToolBar Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
             <Button Name="NewButton" Click="NewButton_Click">
-                <StackPanel Width="60">
-                    <Image Width="32" Source="Icons/document-new.png" />
-                    <Label HorizontalContentAlignment="Center">New</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="24" Source="Icons/document-new.png" />
+                    <Label HorizontalContentAlignment="Center">NEW</Label>
                 </StackPanel>
             </Button>
             <Button Name="OpenButton" Click="OpenButton_Click">
-                <StackPanel Width="60">
-                    <Image Width="32" Source="Icons/document-open.png" />
-                    <Label HorizontalContentAlignment="Center">Open</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="24" Source="Icons/document-open.png" />
+                    <Label HorizontalContentAlignment="Center">OPEN</Label>
                 </StackPanel>
             </Button>
             <Button Name="SaveButton" Click="SaveButton_Click">
-                <StackPanel Width="60">
-                    <Image Width="32" Source="Icons/document-save.png" />
-                    <Label HorizontalContentAlignment="Center">Save</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="24" Source="Icons/document-save.png" />
+                    <Label HorizontalContentAlignment="Center">SAVE</Label>
                 </StackPanel>
             </Button>
             <Separator/>
             <Button Name="AddButton" Click="AddButton_Click">
-                <StackPanel Width="60">
-                    <Image Width="32" Source="Icons/list-add.png" />
-                    <Label HorizontalContentAlignment="Center">Add</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="24" Source="Icons/list-add.png" />
+                    <Label HorizontalContentAlignment="Center">ADD CONTACT</Label>
                 </StackPanel>
             </Button>
             <Button Name="RemoveButton" Click="RemoveButton_Click">
-                <StackPanel Width="60">
-                    <Image Width="32" Source="Icons/edit-delete.png" />
-                    <Label HorizontalContentAlignment="Center">Remove</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="24" Source="Icons/edit-delete.png" />
+                    <Label HorizontalContentAlignment="Center">REMOVE</Label>
                 </StackPanel>
             </Button>
 
@@ -80,17 +83,17 @@
             <Button Grid.Column="5" Margin="1" Click="Button_Click_3">Cancel</Button>
         </Grid>
 
-        <ScrollViewer Grid.Column="0" Grid.Row="3">
-            <StackPanel Name="listBox" />
+        <ScrollViewer Grid.Column="0" Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="listBox" Margin="0,0,10,0" />
         </ScrollViewer>
 
         <StackPanel Grid.Column="1" Grid.Row="3">
-            <StackPanel Name="ContactDetails" Margin="0,10,0,0" />
+            <StackPanel Name="ContactDetails" Margin="10,10,10,0" />
             
-            <Button Name="AddDetailButton" HorizontalAlignment="Right" Margin="10" Click="AddDetailButton_Click">Add...</Button>
+            <Button Name="AddDetailButton" HorizontalAlignment="Left" Margin="10" Click="AddDetailButton_Click">Add details</Button>
             
             <Popup Name="AddDetailPopup" Placement="Mouse"  StaysOpen="False" PopupAnimation="Slide" AllowsTransparency="True" HorizontalAlignment="Right">
-                <Border BorderThickness="1" BorderBrush="Gray" Background="LightGray" CornerRadius="5">
+                <Border BorderThickness="1" BorderBrush="{StaticResource Border}" Background="{StaticResource Background}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

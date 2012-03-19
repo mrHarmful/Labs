@@ -6,8 +6,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel Orientation="Horizontal" >
-        <Button Margin="10,0,10,10" BorderThickness="0 0 0 1" MinWidth="100" MinHeight="20" BorderBrush="LightGray" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="Transparent" Name="Label" HorizontalContentAlignment="Left" Click="Label_Click">123</Button>
-        <TextBox Margin="10,0,10,10" Name="TextBox" Visibility="Collapsed" KeyUp="TextBox_KeyUp" />
-        <Button Margin="0,0,10,10" Name="Delete" Visibility="Collapsed" Click="Delete_Click">Delete</Button>
+        <Button Margin="0,0,0,10" BorderThickness="0 0 0 1" MinWidth="100" MinHeight="20" BorderBrush="LightGray" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="Transparent" Name="Label" HorizontalContentAlignment="Left" Click="Label_Click">123</Button>
+        <TextBox Margin="0,0,0,10" Name="TextBox" Visibility="Collapsed" KeyUp="TextBox_KeyUp" />
+        <Button Margin="10,0,0,10" Name="Delete" Visibility="Collapsed" Click="Delete_Click">Delete</Button>
     </StackPanel>
 </UserControl>

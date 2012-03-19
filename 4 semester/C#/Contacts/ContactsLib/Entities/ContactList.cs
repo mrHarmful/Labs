@@ -10,86 +10,52 @@ using System.Collections;
 namespace ContactsLib
 {
     [DataContract]
-    public class ContactList : IEnumerable<Contact>
+    public class ContactList
     {
         [DataMember]
-        public List<Contact> Contacts { get; private set; }
+        public List<ContactGroup> Groups = new List<ContactGroup>();
 
-        public IEnumerable<Contact> Sorted
+        public ContactGroup DefaultGroup
         {
             get
             {
-                List<Contact> ll = new List<Contact>();
-                ll.AddRange(Contacts.Select(i => i));
-                ll.Sort();
-                return ll;
-            }
-        }
-
-        public IEnumerable<ContactGroup> Groups
-        {
-            get
-            {
-                IEnumerable<string> groups = Contacts.Select<Contact, string>(c => c.Group).Distinct<string>();
-
-                List<ContactGroup> res = new List<ContactGroup>();
-                foreach (string name in groups)
+                ContactGroup g = GetGroup("Ungrouped");
+                if (g == null)
                 {
-                    ContactGroup g = new ContactGroup(name);
-                    res.Add(g);
-                    g.Contacts.AddRange(Contacts.Where<Contact>(c => c.Group == name));
+                    g = new ContactGroup("Ungrouped");
+                    Groups.Add(g);
                 }
-
-                return res;
+                return g;
             }
         }
 
-        public ContactList()
+        public ContactGroup GetGroup(string name)
         {
-            Contacts = new List<Contact>();
-        }
-
-        public void Add(Contact c)
-        {
-            Contacts.Add(c);
-        }
-
-        public void Store<S>(object descriptor) where S : StorageBackend
-        {
-            StorageBackend sb = Activator.CreateInstance<S>();
-            sb.Store(this, descriptor);
-        }
-
-        public static ContactList Load<S>(object descriptor) where S : StorageBackend
-        {
-            StorageBackend sb = Activator.CreateInstance<S>();
-            return sb.Load(descriptor);
-        }
-
-        public Contact this[int idx]
-        {
-            get
+            try
             {
-                return Contacts[idx];
+                return Groups.First<ContactGroup>(x => x.Name == name);
             }
+            catch { return null; }
         }
 
-        #region IEnumerable
-        public IEnumerator<Contact> GetEnumerator()
+        public ContactGroup GetGroupOf(Contact c)
         {
-            return Contacts.GetEnumerator();
+            try
+            {
+                return Groups.First<ContactGroup>(x => x.Contains(c));
+            }
+            catch { return null; }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        public void Remove(Contact c)
         {
-            return Contacts.GetEnumerator();
+            GetGroupOf(c).Contacts.Remove(c);
+            List<ContactGroup> deadGroups = new List<ContactGroup>();
+            foreach (ContactGroup g in Groups)
+                if (g.Contacts.Count == 0)
+                    deadGroups.Add(g);
+            foreach (ContactGroup g in deadGroups)
+                Groups.Remove(g);
         }
-        #endregion
-
-        public void Remove(Contact contact)
-        {
-            Contacts.Remove(contact);
-        }
-
     }
 }

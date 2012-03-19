@@ -9,7 +9,7 @@ namespace ContactsLib.StorageBackends
     {
         public StorageBackend() { }
 
-        internal abstract void Store(ContactList list, object descriptor);
-        internal abstract ContactList Load(object descriptor);
+        public abstract void Store(ContactList list, object descriptor);
+        public abstract ContactList Load(object descriptor);
     }
 }

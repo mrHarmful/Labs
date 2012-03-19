@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ContactsLib.Entities;
 
 namespace ContactsApp
 {
@@ -34,7 +35,7 @@ namespace ContactsApp
 
         internal void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Controller.SelectContact((int)(((sender as ListBox).SelectedItem as FrameworkElement).Tag));
+            Controller.SelectContact((Contact)(((sender as ListBox).SelectedItem as FrameworkElement).Tag));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

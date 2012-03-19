@@ -9,7 +9,7 @@ namespace ContactsLib.StorageBackends
 {
     public class XMLStorageBackend : StorageBackend
     {
-        internal override void Store(ContactList list, object descriptor)
+        public override void Store(ContactList list, object descriptor)
         {
             FileStream fs = null;
             try
@@ -32,7 +32,7 @@ namespace ContactsLib.StorageBackends
             }
         }
 
-        internal override ContactList Load(object descriptor)
+        public override ContactList Load(object descriptor)
         {
             FileStream fs = null;
             try
