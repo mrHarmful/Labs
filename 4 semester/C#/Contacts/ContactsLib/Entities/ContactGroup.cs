@@ -3,17 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace ContactsLib.Entities
 {
     [DataContract]
-    public class ContactGroup : IEnumerable<Contact>
+    public class ContactGroup : IEnumerable<Contact>, INotifyPropertyChanged, IDeserializationCallback
     {
+        private string _Name;
         [DataMember]
-        public string Name;
-        
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                _Name = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("Name"));
+            }
+        }
+
+        private ObservableCollection<Contact> _Contacts = new ObservableCollection<Contact>();
         [DataMember]
-        public List<Contact> Contacts = new List<Contact>();
+        public ObservableCollection<Contact> Contacts
+        {
+            get { return _Contacts; }
+            set
+            {
+                _Contacts = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("Contacts"));
+            }
+        }
 
         public IEnumerable<Contact> Sorted
         {
@@ -29,6 +51,7 @@ namespace ContactsLib.Entities
         public ContactGroup(string name)
         {
             Name = name;
+            Init();
         }
 
         #region IEnumerable
@@ -46,6 +69,21 @@ namespace ContactsLib.Entities
         public override string ToString()
         {
             return Name;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        public void OnDeserialization(object sender)
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            Contacts.CollectionChanged += delegate
+            {
+                ContactList.Instance.InvalidateContactList();
+            };
         }
     }
 }

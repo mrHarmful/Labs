@@ -19,9 +19,29 @@ namespace ContactsApp
     /// </summary>
     public partial class EditableField : UserControl
     {
+        public static DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(EditableField));
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        public static DependencyProperty DeletableProperty = DependencyProperty.Register("Deletable", typeof(bool), typeof(EditableField));
+        public bool Deletable
+        {
+            get { return (bool)GetValue(DeletableProperty); }
+            set { SetValue(DeletableProperty, value); }
+        }
+
+        public static DependencyProperty FontSizeProperty = DependencyProperty.Register("FontSize", typeof(int), typeof(EditableField));
+        public int FontSize
+        {
+            get { return (int)GetValue(FontSizeProperty); }
+            set { SetValue(FontSizeProperty, value); }
+        }
+
         public event Action<EditableField, string> Changed = delegate { };
         public event Action<EditableField> Deleted;
-        public bool Deletable = true;
 
         public EditableField()
         {
@@ -34,7 +54,6 @@ namespace ContactsApp
             TextBox.Visibility = System.Windows.Visibility.Visible;
             if (Deletable)
                 Delete.Visibility = System.Windows.Visibility.Visible;
-            TextBox.Text = Label.Content as string;
             TextBox.SelectAll();
             TextBox.Focus();
         }
@@ -51,7 +70,6 @@ namespace ContactsApp
             if (e.Key == Key.Enter)
             {
                 Changed(this, TextBox.Text);
-                Label.Content = TextBox.Text;
                 Hide();
             }
             if (e.Key == Key.Escape)

@@ -222,49 +222,11 @@
         <ContentPresenter />
     </ControlTemplate>
 
-    <Style TargetType="Expander">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Expander">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Name="ContentRow" Height="0"/>
-                        </Grid.RowDefinitions>
-                                <ToggleButton
-                                    Grid.Row="0" 
-                                    Background="Transparent"
-                                    Margin="0"
-                                    Template="{StaticResource ExpanderButton}"
-                                    TextBlock.Foreground="{StaticResource Foreground}"
-                                    IsChecked="{Binding Path=IsExpanded,Mode=TwoWay,
-                                    RelativeSource={RelativeSource TemplatedParent}}">
-                                    <ContentPresenter 
-                                        Margin="4" 
-                                        ContentSource="Header" 
-                                        RecognizesAccessKey="True" />
-                                </ToggleButton>
-                        <Border 
-                            Name="Content" 
-                            Grid.Row="1" 
-                            BorderBrush="{StaticResource Border}" 
-                            BorderThickness="0,3,0,0">
-                            <ContentPresenter Margin="0,4,0,4" />
-                        </Border>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsExpanded" Value="True">
-                            <Setter TargetName="ContentRow" Property="Height"
-                    Value="{Binding ElementName=Content,Path=DesiredHeight}" />
-                        </Trigger>
 
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-    <Style x:Key="{x:Type ListBox}" TargetType="ListBox">
+
+    <!--Style x:Key="{x:Type ListBox}" TargetType="ListBox">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
@@ -286,7 +248,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style-->
 
     <Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -315,8 +277,12 @@
         </Setter>
     </Style>
 
+    <Style x:Key="{x:Type Label}" TargetType="Label">
+        <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
+    </Style>
 
     <Style x:Key="ListBoxLabel" TargetType="Label">
+        <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
         <Style.Triggers>
             <DataTrigger Value="true">
                 <DataTrigger.Binding>
@@ -360,9 +326,44 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Margin" Value="0" />
+        <Setter Property="Label.FontWeight" Value="Bold" />
     </Style>
 
     <Style x:Key="{x:Type Button}" 
        BasedOn="{StaticResource ButtonStyle}"
        TargetType="{x:Type Button}" />
+
+
+
+    <!-- Contact list -->
+
+    <DataTemplate x:Key="ContactTemplate">
+        <Label Content="{Binding Name}" Style="{StaticResource ListBoxLabel}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="GroupHeaderTemplate">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Name="ContentRow" Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ToggleButton
+                Grid.Row="0" 
+                Name="Toggle"
+                Background="Transparent"
+                Margin="3,3,0,2"
+                Template="{StaticResource ExpanderButton}"
+                TextBlock.Foreground="{StaticResource Foreground}"
+                Content="{Binding Name}"
+                />
+            <Border 
+                Name="Content" 
+                Grid.Row="1" 
+                Margin="0,3,0,0"
+                BorderBrush="{StaticResource Border}" 
+                BorderThickness="0,3,0,0">
+            </Border>
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

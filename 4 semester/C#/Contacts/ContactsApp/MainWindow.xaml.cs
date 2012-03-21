@@ -20,9 +20,9 @@ namespace ContactsApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public App Controller;
+        public Controller Controller { get; set; }
 
-        public MainWindow(App c)
+        public MainWindow(Controller c)
         {
             Controller = c;
             InitializeComponent();
@@ -103,6 +103,23 @@ namespace ContactsApp
         private void AddDetailButton_Click(object sender, RoutedEventArgs e)
         {
             AddDetailPopup.IsOpen = true;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ContactName_Changed(EditableField arg1, string arg2)
+        {
+            Controller.ContactList.InvalidateContactList();
+        }
+
+
+        private void Group_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Controller.ChangeContactGroup(Controller.CurrentContact, (sender as ComboBox).Text);
         }
     }
 }
