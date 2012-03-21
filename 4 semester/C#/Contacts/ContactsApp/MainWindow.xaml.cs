@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ContactsLib.Entities;
 
 namespace ContactsApp
@@ -20,22 +10,17 @@ namespace ContactsApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Controller Controller { get; set; }
-
         public MainWindow(Controller c)
         {
             Controller = c;
             InitializeComponent();
         }
 
+        public Controller Controller { get; set; }
+
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             Controller.LoadContactList();
-        }
-
-        internal void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Controller.SelectContact((Contact)(((sender as ListBox).SelectedItem as FrameworkElement).Tag));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -78,8 +63,8 @@ namespace ContactsApp
 
         private void AddDetail_Click(object sender, RoutedEventArgs e)
         {
-            AddDetailPanel.Visibility = System.Windows.Visibility.Visible;
-            AddDetailTitle.Text = ((FrameworkElement)sender).Tag as string;
+            AddDetailPanel.Visibility = Visibility.Visible;
+            AddDetailTitle.Text = ((FrameworkElement) sender).Tag as string;
             AddDetailValue.Text = "";
             AddDetailValue.Focus();
             AddDetailPopup.IsOpen = false;
@@ -90,14 +75,14 @@ namespace ContactsApp
             Controller.AddSimpleDetail(AddDetailTitle.Text, AddDetailValue.Text);
             AddDetailTitle.Text = "";
             AddDetailValue.Text = "";
-            AddDetailPanel.Visibility = System.Windows.Visibility.Collapsed;
+            AddDetailPanel.Visibility = Visibility.Collapsed;
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             AddDetailTitle.Text = "";
             AddDetailValue.Text = "";
-            AddDetailPanel.Visibility = System.Windows.Visibility.Collapsed;
+            AddDetailPanel.Visibility = Visibility.Collapsed;
         }
 
         private void AddDetailButton_Click(object sender, RoutedEventArgs e)
@@ -107,7 +92,6 @@ namespace ContactsApp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void ContactName_Changed(EditableField arg1, string arg2)
@@ -120,6 +104,11 @@ namespace ContactsApp
         {
             if (e.Key == Key.Enter)
                 Controller.ChangeContactGroup(Controller.CurrentContact, (sender as ComboBox).Text);
+        }
+
+        private void EditableField_Deleted(EditableField obj)
+        {
+            Controller.CurrentContact.Details.Remove(obj.Tag as ContactDetail);
         }
     }
 }

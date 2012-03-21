@@ -1,19 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace ContactsLib.Entities
 {
     [DataContract]
-    [KnownType(typeof(SimpleContactDetail))]
-    public abstract class ContactDetail
+    public class ContactDetail : INotifyPropertyChanged
     {
-        [DataMember]
-        public String Name;
+        [DataMember] private string _Content;
+        [DataMember] public String _Name;
 
-        [DataMember]
-        public abstract object Content { get; set; }
+        public ContactDetail(string name, string value)
+        {
+            Name = name;
+            Content = value;
+        }
+
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                _Name = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("Name"));
+            }
+        }
+
+        public string Content
+        {
+            get { return _Content; }
+            set
+            {
+                _Content = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("Content"));
+            }
+        }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        #endregion
     }
 }

@@ -47,7 +47,6 @@
     <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\ContactDetail.cs" />
     <Compile Include="Entities\ContactEntry.cs" />
-    <Compile Include="Entities\SimpleContactDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageBackends\StorageBackend.cs" />
     <Compile Include="StorageBackends\XMLStorageBackend.cs" />

@@ -1,17 +1,23 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
-using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace ContactsLib.Entities
 {
     [DataContract]
     public class ContactGroup : IEnumerable<Contact>, INotifyPropertyChanged, IDeserializationCallback
     {
+        private ObservableCollection<Contact> _Contacts = new ObservableCollection<Contact>();
         private string _Name;
+
+        public ContactGroup(string name)
+        {
+            Name = name;
+            Init();
+        }
+
         [DataMember]
         public string Name
         {
@@ -20,11 +26,10 @@ namespace ContactsLib.Entities
             {
                 _Name = value;
                 if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("Name"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("_Name"));
             }
         }
 
-        private ObservableCollection<Contact> _Contacts = new ObservableCollection<Contact>();
         [DataMember]
         public ObservableCollection<Contact> Contacts
         {
@@ -37,53 +42,43 @@ namespace ContactsLib.Entities
             }
         }
 
-        public IEnumerable<Contact> Sorted
-        {
-            get
-            {
-                List<Contact> ll = new List<Contact>();
-                ll.AddRange(Contacts);
-                ll.Sort();
-                return ll;
-            }
-        }
-
-        public ContactGroup(string name)
-        {
-            Name = name;
-            Init();
-        }
-
-        #region IEnumerable
-        public IEnumerator<Contact> GetEnumerator()
-        {
-            return Contacts.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return Contacts.GetEnumerator();
-        }
-        #endregion
-
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        #region IDeserializationCallback Members
 
         public void OnDeserialization(object sender)
         {
             Init();
         }
 
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        #endregion
+
         private void Init()
         {
-            Contacts.CollectionChanged += delegate
-            {
-                ContactList.Instance.InvalidateContactList();
-            };
+            Contacts.CollectionChanged += delegate { ContactList.Instance.InvalidateContactList(); };
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        #region IEnumerable
+
+        public IEnumerator<Contact> GetEnumerator()
+        {
+            return Contacts.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Contacts.GetEnumerator();
+        }
+
+        #endregion
     }
 }

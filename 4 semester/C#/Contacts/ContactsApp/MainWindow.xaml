@@ -94,7 +94,7 @@
                 <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0"
-                   Width="50">Name:</Label>
+                   Width="50">_Name:</Label>
             <TextBox Grid.Column="1"
                      Margin="1"
                      Name="AddContactName"
@@ -167,21 +167,41 @@
                     </Style.Triggers>
                 </Style>
             </StackPanel.Style>
-            <local:EditableField Text="{Binding Path=/Name, Mode=TwoWay}"
-                                 FontSize="24"
-                                 Deletable="False"
-                                 Changed="ContactName_Changed" />
-            <ComboBox IsEditable="True"
-                      ItemsSource="{Binding ElementName=Window, Path=Controller.ContactList.Groups}"
-                      Text="{Binding /Group, Mode=OneWay}"
-                      KeyUp="Group_KeyUp" />
 
-            <StackPanel Name="ContactDetails"
-                        Margin="10,10,10,0" />
+            <DockPanel>
+                <local:EditableField Text="{Binding Path=/Name, Mode=TwoWay}"
+                                     FontSize="24"
+                                     Deletable="False"
+                                     Changed="ContactName_Changed" />
+                <ComboBox IsEditable="True"
+                          ItemsSource="{Binding ElementName=Window, Path=Controller.ContactList.Groups}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          Text="{Binding /Group, Mode=OneWay}"
+                          KeyUp="Group_KeyUp" />
+            </DockPanel>
+
+            <ItemsControl ItemsSource="{Binding /Details}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Label FontWeight="Bold"
+                                   Content="{Binding Name}" />
+                            <local:EditableField Text="{Binding Content, Mode=TwoWay}"
+                                                 FontSize="12"
+                                                 Margin="10,0,0,0"
+                                                 Deletable="True" 
+                                                 Tag="{Binding}"
+                                                 Deleted="EditableField_Deleted"
+                                                 />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <Button Name="AddDetailButton"
                     HorizontalAlignment="Left"
-                    Margin="10"
+                    Margin="2,10,0,0"
                     Click="AddDetailButton_Click">Add details</Button>
 
             <Popup Name="AddDetailPopup"
