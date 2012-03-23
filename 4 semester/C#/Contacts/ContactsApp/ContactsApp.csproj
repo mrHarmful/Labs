@@ -41,6 +41,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,11 +59,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="ContactListItem.xaml">
+    <Page Include="EditableField.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EditableField.xaml">
+    <Page Include="GroupGraph.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -74,12 +75,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ContactListItem.xaml.cs">
-      <DependentUpon>ContactListItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controller.cs" />
     <Compile Include="EditableField.xaml.cs">
       <DependentUpon>EditableField.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GroupGraph.xaml.cs">
+      <DependentUpon>GroupGraph.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -128,6 +129,9 @@
   <ItemGroup>
     <Resource Include="Icons\edit-delete.png" />
     <Resource Include="Icons\list-add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\stats.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

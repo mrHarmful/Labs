@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace ContactsLib.StorageBackends
 {
@@ -23,7 +20,7 @@ namespace ContactsLib.StorageBackends
 
             try
             {
-                DataContractSerializer dcs = new DataContractSerializer(typeof(ContactList));
+                var dcs = new DataContractSerializer(typeof (ContactList));
                 dcs.WriteObject(fs, list);
             }
             finally
@@ -46,8 +43,8 @@ namespace ContactsLib.StorageBackends
 
             try
             {
-                DataContractSerializer dcs = new DataContractSerializer(typeof(ContactList));
-                ContactList result = (ContactList)dcs.ReadObject(fs);
+                var dcs = new DataContractSerializer(typeof (ContactList));
+                var result = (ContactList) dcs.ReadObject(fs);
                 return result;
             }
             finally

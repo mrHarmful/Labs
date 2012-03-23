@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ContactsLib.Entities;
-using System.Runtime.Serialization;
-using ContactsLib.StorageBackends;
-using System.Collections;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.Serialization;
+using ContactsLib.Entities;
 
 namespace ContactsLib
 {
     [DataContract]
     public class ContactList : INotifyPropertyChanged, IDeserializationCallback
     {
+        internal static ContactList Instance;
         private ObservableCollection<ContactGroup> _Groups = new ObservableCollection<ContactGroup>();
+
+        public ContactList()
+        {
+            Instance = this;
+        }
+
         [DataMember]
         public ObservableCollection<ContactGroup> Groups
         {
@@ -29,25 +32,28 @@ namespace ContactsLib
 
         public ContactGroup DefaultGroup
         {
-            get
-            {
-                return GetGroup("Ungrouped");
-            }
+            get { return GetGroup("Ungrouped"); }
         }
 
         public IEnumerable<Contact> Contacts
         {
-            get
-            {
-                return Groups.SelectMany<ContactGroup, Contact>(g => g.Contacts);
-            }
+            get { return Groups.SelectMany(g => g.Contacts); }
         }
 
-        internal static ContactList Instance;
-        public ContactList()
+        #region IDeserializationCallback Members
+
+        public void OnDeserialization(object sender)
         {
             Instance = this;
         }
+
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        #endregion
 
         public void InvalidateContactList()
         {
@@ -56,7 +62,7 @@ namespace ContactsLib
 
         public ContactGroup GetGroup(string name)
         {
-            ContactGroup g = Groups.FirstOrDefault<ContactGroup>(x => x.Name == name);
+            ContactGroup g = Groups.FirstOrDefault(x => x.Name == name);
             if (g == null)
             {
                 g = new ContactGroup(name);
@@ -67,25 +73,18 @@ namespace ContactsLib
 
         public ContactGroup GetGroupOf(Contact c)
         {
-            return Groups.FirstOrDefault<ContactGroup>(x => x.Contains(c));
+            return Groups.FirstOrDefault(x => x.Contains(c));
         }
 
         public void Remove(Contact c)
         {
             GetGroupOf(c).Contacts.Remove(c);
-            List<ContactGroup> deadGroups = new List<ContactGroup>();
+            var deadGroups = new List<ContactGroup>();
             foreach (ContactGroup g in Groups)
                 if (g.Contacts.Count == 0)
                     deadGroups.Add(g);
             foreach (ContactGroup g in deadGroups)
                 Groups.Remove(g);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        public void OnDeserialization(object sender)
-        {
-            Instance = this;
         }
 
         public void Add(Contact contact, string g)

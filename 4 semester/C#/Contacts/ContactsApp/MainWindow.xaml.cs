@@ -14,6 +14,7 @@ namespace ContactsApp
         {
             Controller = c;
             InitializeComponent();
+            GroupGraph.Update();
         }
 
         public Controller Controller { get; set; }
@@ -21,6 +22,7 @@ namespace ContactsApp
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             Controller.LoadContactList();
+            GroupGraph.Update();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -42,12 +44,14 @@ namespace ContactsApp
                 AddContactPanel.Visibility = Visibility.Collapsed;
                 Controller.CreateContact(AddContactName.Text);
                 AddContactName.Text = "";
+                GroupGraph.Update();
             }
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             Controller.RemoveContact();
+            GroupGraph.Update();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -59,6 +63,7 @@ namespace ContactsApp
         {
             Controller.NewContactList();
             AddDetailPopup.IsOpen = false;
+            GroupGraph.Update();
         }
 
         private void AddDetail_Click(object sender, RoutedEventArgs e)
@@ -76,6 +81,7 @@ namespace ContactsApp
             AddDetailTitle.Text = "";
             AddDetailValue.Text = "";
             AddDetailPanel.Visibility = Visibility.Collapsed;
+            GroupGraph.Update();
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
@@ -103,12 +109,16 @@ namespace ContactsApp
         private void Group_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
+            {
                 Controller.ChangeContactGroup(Controller.CurrentContact, (sender as ComboBox).Text);
+                GroupGraph.Update();
+            }
         }
 
         private void EditableField_Deleted(EditableField obj)
         {
             Controller.CurrentContact.Details.Remove(obj.Tag as ContactDetail);
+            GroupGraph.Update();
         }
     }
 }
