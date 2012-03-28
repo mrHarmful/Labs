@@ -238,12 +238,15 @@ Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" Story
     </Setter>
   </Style>
 
-  <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" BasedOn="{StaticResource ButtonStyle}" TargetType="{x:Type Button}">
+  <Style x:Key="ToolButtonStyle" BasedOn="{StaticResource ButtonStyle}" TargetType="{x:Type Button}">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="Margin" Value="0" />
     <Setter Property="Label.FontWeight" Value="Bold" />
   </Style>
+
+  <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" BasedOn="{StaticResource ToolButtonStyle}"
+         TargetType="{x:Type Button}" />
 
   <Style x:Key="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}" TargetType="{x:Type Button}" />
 

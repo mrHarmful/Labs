@@ -59,6 +59,15 @@
           <Image Width="24" Source="Icons/edit-delete.png" />
           <Label HorizontalContentAlignment="Center">REMOVE</Label>
         </StackPanel>
+        <Button.Style>
+          <Style TargetType="Button" BasedOn="{StaticResource ToolButtonStyle}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=Window, Path=Controller.CurrentContact}" Value="{x:Null}">
+                <Setter Property="IsEnabled" Value="False" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Button.Style>
       </Button>
       <Separator />
       <ToggleButton x:Name="StatsToggle">
@@ -150,16 +159,11 @@
       <Popup Name="AddDetailPopup" Placement="Mouse" StaysOpen="False" PopupAnimation="Slide" AllowsTransparency="True"
              HorizontalAlignment="Right">
         <Border BorderThickness="1" BorderBrush="{StaticResource Border}" Background="{StaticResource Background}">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Button Margin="10,2,10,2" Grid.Row="0" Tag="Phone" Click="AddDetail_Click">Phone</Button>
-            <Button Margin="10,2,10,2" Grid.Row="1" Tag="Address" Click="AddDetail_Click">Address</Button>
-            <Button Margin="10,2,10,2" Grid.Row="2" Tag="" Click="AddDetail_Click">Other</Button>
-          </Grid>
+          <StackPanel Orientation="Horizontal">
+            <Button Margin="10,2,10,2" Tag="Phone" Click="AddDetail_Click">Phone</Button>
+            <Button Margin="10,2,10,2" Tag="Address" Click="AddDetail_Click">Address</Button>
+            <Button Margin="10,2,10,2" Tag="" Click="AddDetail_Click">Other</Button>
+          </StackPanel>
         </Border>
       </Popup>
 
