@@ -66,6 +66,7 @@ namespace ContactsApp
         {
             if (e.Key == Key.Enter)
             {
+                Text = TextBox.Text;
                 Changed(this, TextBox.Text);
                 Hide();
             }

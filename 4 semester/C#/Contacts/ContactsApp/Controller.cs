@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using ContactsLib;
 using ContactsLib.Entities;
-using ContactsLib.StorageBackends;
 using Microsoft.Win32;
 
 namespace ContactsApp
@@ -16,9 +15,10 @@ namespace ContactsApp
                                                                                               typeof (Contact),
                                                                                               typeof (Controller));
 
-        public Controller()
+        public Controller(string conn)
         {
-            NewContactList();
+           ContactList = new ContactList(conn);
+            ContactList.Reload();
         }
 
         public ContactList ContactList
@@ -33,63 +33,23 @@ namespace ContactsApp
             set { SetValue(CurrentContactProperty, value); }
         }
 
-        private string FileName { get; set; }
-
-        public void NewContactList()
-        {
-            FileName = null;
-            ContactList = new ContactList();
-        }
-
-        public bool LoadContactList()
-        {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "XML Files|*.xml";
-            if (ofd.ShowDialog().Value)
-            {
-                try
-                {
-                    ContactList = new XMLStorageBackend().Load(ofd.FileName);
-                    FileName = ofd.FileName;
-                    return true;
-                }
-                catch
-                {
-                    MessageBox.Show("Failed to load contact list", "Contacts", MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
-                }
-            }
-            return false;
-        }
-
-        public bool SaveContactList()
-        {
-            if (FileName == null)
-            {
-                var sfd = new SaveFileDialog();
-                sfd.Filter = "XML Files|*.xml";
-                if (!sfd.ShowDialog().Value)
-                    return false;
-                FileName = sfd.FileName;
-            }
-
-            new XMLStorageBackend().Store(ContactList, FileName);
-            return true;
-        }
-
         public void CreateContact(string name)
         {
             var c = new Contact(name);
             ContactList.DefaultGroup.Contacts.Add(c);
+            c.Persist();
         }
 
         public void AddSimpleDetail(string title, string value)
         {
-            CurrentContact.Details.Add(new ContactDetail(title, value));
+            ContactDetail d = new ContactDetail(title, value);
+            CurrentContact.Details.Add(d);
+            d.Persist();
         }
 
         public void RemoveContact()
         {
+            CurrentContact.Destroy();
             ContactList.Remove(CurrentContact);
         }
 
@@ -100,6 +60,7 @@ namespace ContactsApp
                 ContactList.Remove(contact);
                 ContactList.Add(contact, g);
                 CurrentContact = contact;
+                contact.Persist();
             }
         }
     }

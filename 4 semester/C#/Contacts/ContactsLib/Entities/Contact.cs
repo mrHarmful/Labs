@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Runtime.Serialization;
 
 namespace ContactsLib.Entities
@@ -8,12 +10,20 @@ namespace ContactsLib.Entities
     [DataContract]
     public class Contact : IComparable<Contact>, INotifyPropertyChanged
     {
+        internal long ID = -1;
         [DataMember] private ObservableCollection<ContactDetail> _Details = new ObservableCollection<ContactDetail>();
         [DataMember] private string _Name;
 
         public Contact(string name)
         {
             Name = name;
+            PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
+                                   {
+                                       if (ContactList.Instance.isLoading)
+                                           return;
+
+                                       Persist();
+                                   };
         }
 
         public string Name
@@ -55,5 +65,35 @@ namespace ContactsLib.Entities
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         #endregion
+
+        public void Persist()
+        {
+            ContactGroup g = ContactList.Instance.GetGroupOf(this);
+            if (ID == -1)
+            {
+                if (g == null) return;
+                ID = (int) (new SqlCommand(
+                               String.Format("INSERT INTO Contacts (Name, ContactGroup_id) OUTPUT INSERTED.id VALUES ('{0}', {1})", Name, g.ID)
+                               , ContactList.Instance.Connection).ExecuteScalar());
+            }
+            else
+            {
+                new SqlCommand(
+                    String.Format("UPDATE Contacts SET Name = '{0}', ContactGroup_id={1} WHERE id = {2}",
+                                  Name, g.ID, ID), ContactList.Instance.Connection).
+                    ExecuteNonQuery();
+            }
+        }
+
+        public void Destroy()
+        {
+            if (ContactList.Instance.isLoading)
+                return;
+
+            new SqlCommand(
+                String.Format("DELETE FROM Contacts WHERE id = {0}",
+                              ID), ContactList.Instance.Connection).
+                ExecuteNonQuery();
+        }
     }
 }

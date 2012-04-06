@@ -9,8 +9,7 @@
             Background="Transparent" Name="Label" HorizontalContentAlignment="Left" Click="Label_Click"
             Content="{Binding ElementName=This, Path=Text, Mode=TwoWay}" />
     <TextBox Margin="0,0,0,10" Name="TextBox" FontSize="{Binding ElementName=This, Path=FontSize}"
-             Visibility="Collapsed" KeyUp="TextBox_KeyUp"
-             Text="{Binding ElementName=This, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+             Visibility="Collapsed" KeyUp="TextBox_KeyUp" Text="{Binding ElementName=This, Path=Text, Mode=OneWay}" />
     <Button Margin="10,0,0,10" Name="Delete" Visibility="Collapsed" Click="Delete_Click">Delete</Button>
   </StackPanel>
 </UserControl>

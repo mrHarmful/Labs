@@ -29,25 +29,6 @@
     </Grid.ColumnDefinitions>
 
     <ToolBar Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
-      <Button Name="NewButton" Click="NewButton_Click">
-        <StackPanel Orientation="Horizontal">
-          <Image Width="24" Source="Icons/document-new.png" />
-          <Label HorizontalContentAlignment="Center">NEW</Label>
-        </StackPanel>
-      </Button>
-      <Button Name="OpenButton" Click="OpenButton_Click">
-        <StackPanel Orientation="Horizontal">
-          <Image Width="24" Source="Icons/document-open.png" />
-          <Label HorizontalContentAlignment="Center">OPEN</Label>
-        </StackPanel>
-      </Button>
-      <Button Name="SaveButton" Click="SaveButton_Click">
-        <StackPanel Orientation="Horizontal">
-          <Image Width="24" Source="Icons/document-save.png" />
-          <Label HorizontalContentAlignment="Center">SAVE</Label>
-        </StackPanel>
-      </Button>
-      <Separator />
       <Button Name="AddButton" Click="AddButton_Click">
         <StackPanel Orientation="Horizontal">
           <Image Width="24" Source="Icons/list-add.png" />

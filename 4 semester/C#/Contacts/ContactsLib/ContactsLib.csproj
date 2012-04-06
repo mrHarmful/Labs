@@ -46,10 +46,7 @@
     <Compile Include="Entities\ContactList.cs" />
     <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\ContactDetail.cs" />
-    <Compile Include="Entities\ContactEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StorageBackends\StorageBackend.cs" />
-    <Compile Include="StorageBackends\XMLStorageBackend.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

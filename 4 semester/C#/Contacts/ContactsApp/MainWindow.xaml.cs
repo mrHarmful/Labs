@@ -19,12 +19,6 @@ namespace ContactsApp
 
         public Controller Controller { get; set; }
 
-        private void OpenButton_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.LoadContactList();
-            GroupGraph.Update();
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             AddContactPanel.Visibility = Visibility.Collapsed;
@@ -51,18 +45,6 @@ namespace ContactsApp
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             Controller.RemoveContact();
-            GroupGraph.Update();
-        }
-
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.SaveContactList();
-        }
-
-        private void NewButton_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.NewContactList();
-            AddDetailPopup.IsOpen = false;
             GroupGraph.Update();
         }
 
@@ -117,6 +99,7 @@ namespace ContactsApp
 
         private void EditableField_Deleted(EditableField obj)
         {
+            (obj.Tag as ContactDetail).Destroy();
             Controller.CurrentContact.Details.Remove(obj.Tag as ContactDetail);
             GroupGraph.Update();
         }

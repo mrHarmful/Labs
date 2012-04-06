@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Runtime.Serialization;
 
 namespace ContactsLib.Entities
@@ -9,6 +11,7 @@ namespace ContactsLib.Entities
     [DataContract]
     public class ContactGroup : IEnumerable<Contact>, INotifyPropertyChanged, IDeserializationCallback
     {
+        internal long ID = -1;
         private ObservableCollection<Contact> _Contacts = new ObservableCollection<Contact>();
         private string _Name;
 
@@ -56,6 +59,34 @@ namespace ContactsLib.Entities
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         #endregion
+
+        public void Persist()
+        {
+            if (ID == -1)
+            {
+                ID = (int) (new SqlCommand(
+                               String.Format("INSERT INTO ContactGroups (Name) OUTPUT INSERTED.id VALUES ('{0}')", Name)
+                               , ContactList.Instance.Connection).ExecuteScalar());
+            }
+            else
+            {
+                new SqlCommand(
+                    String.Format("UPDATE ContactGroups SET Name = '{0}' WHERE id = {1}",
+                                  Name, ID), ContactList.Instance.Connection).
+                    ExecuteNonQuery();
+            }
+        }
+
+        public void Destroy()
+        {
+            if (ContactList.Instance.isLoading)
+                return;
+
+            new SqlCommand(
+                String.Format("DELETE FROM ContactGroups WHERE id = {0}",
+                              ID), ContactList.Instance.Connection).
+                ExecuteNonQuery();
+        }
 
         private void Init()
         {
