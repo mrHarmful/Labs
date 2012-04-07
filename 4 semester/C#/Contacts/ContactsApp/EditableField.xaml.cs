@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ContactsApp
 {
@@ -19,39 +10,64 @@ namespace ContactsApp
     /// </summary>
     public partial class EditableField : UserControl
     {
-        public event Action<EditableField, string> Changed = delegate { };
-        public event Action<EditableField> Deleted;
-        public bool Deletable = true;
+        public static DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof (string),
+                                                                                    typeof (EditableField));
+
+        public static DependencyProperty DeletableProperty = DependencyProperty.Register("Deletable", typeof (bool),
+                                                                                         typeof (EditableField));
+
+        public new static DependencyProperty FontSizeProperty = DependencyProperty.Register("FontSize", typeof (int),
+                                                                                            typeof (EditableField));
 
         public EditableField()
         {
             InitializeComponent();
         }
 
+        public string Text
+        {
+            get { return (string) GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+
+        public bool Deletable
+        {
+            get { return (bool) GetValue(DeletableProperty); }
+            set { SetValue(DeletableProperty, value); }
+        }
+
+        public new int FontSize
+        {
+            get { return (int) GetValue(FontSizeProperty); }
+            set { SetValue(FontSizeProperty, value); }
+        }
+
+        public event Action<EditableField, string> Changed = delegate { };
+        public event Action<EditableField> Deleted;
+
         private void Label_Click(object sender, RoutedEventArgs e)
         {
-            Label.Visibility = System.Windows.Visibility.Collapsed;
-            TextBox.Visibility = System.Windows.Visibility.Visible;
+            Label.Visibility = Visibility.Collapsed;
+            TextBox.Visibility = Visibility.Visible;
             if (Deletable)
-                Delete.Visibility = System.Windows.Visibility.Visible;
-            TextBox.Text = Label.Content as string;
+                Delete.Visibility = Visibility.Visible;
             TextBox.SelectAll();
             TextBox.Focus();
         }
 
         private void Hide()
         {
-            Label.Visibility = System.Windows.Visibility.Visible;
-            TextBox.Visibility = System.Windows.Visibility.Collapsed;
-            Delete.Visibility = System.Windows.Visibility.Collapsed;
+            Label.Visibility = Visibility.Visible;
+            TextBox.Visibility = Visibility.Collapsed;
+            Delete.Visibility = Visibility.Collapsed;
         }
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
+                Text = TextBox.Text;
                 Changed(this, TextBox.Text);
-                Label.Content = TextBox.Text;
                 Hide();
             }
             if (e.Key == Key.Escape)

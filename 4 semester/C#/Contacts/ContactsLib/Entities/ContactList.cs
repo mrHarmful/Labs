@@ -1,95 +1,174 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using ContactsLib.Entities;
 using System.Runtime.Serialization;
-using ContactsLib.StorageBackends;
-using System.Collections;
+using ContactsLib.Entities;
 
 namespace ContactsLib
 {
     [DataContract]
-    public class ContactList : IEnumerable<Contact>
+    public class ContactList : INotifyPropertyChanged, IDeserializationCallback
     {
-        [DataMember]
-        public List<Contact> Contacts { get; private set; }
+        public static ContactList Instance;
+        private ObservableCollection<ContactGroup> _Groups = new ObservableCollection<ContactGroup>();
+        private SqlConnection _connection;
+        internal bool isLoading;
 
-        public IEnumerable<Contact> Sorted
+        public ContactList(string conn)
         {
-            get
-            {
-                List<Contact> ll = new List<Contact>();
-                ll.AddRange(Contacts.Select(i => i));
-                ll.Sort();
-                return ll;
-            }
+            Instance = this;
+            Connection = new SqlConnection(conn);
         }
 
-        public IEnumerable<ContactGroup> Groups
+        internal SqlConnection Connection
         {
             get
             {
-                IEnumerable<string> groups = Contacts.Select<Contact, string>(c => c.Group).Distinct<string>();
-
-                List<ContactGroup> res = new List<ContactGroup>();
-                foreach (string name in groups)
+                if (_connection.State != ConnectionState.Open)
                 {
-                    ContactGroup g = new ContactGroup(name);
-                    res.Add(g);
-                    g.Contacts.AddRange(Contacts.Where<Contact>(c => c.Group == name));
+                    _connection.Open();
                 }
-
-                return res;
+                return _connection;
             }
+            set { _connection = value; }
         }
 
-        public ContactList()
+        [DataMember]
+        public ObservableCollection<ContactGroup> Groups
         {
-            Contacts = new List<Contact>();
-        }
-
-        public void Add(Contact c)
-        {
-            Contacts.Add(c);
-        }
-
-        public void Store<S>(object descriptor) where S : StorageBackend
-        {
-            StorageBackend sb = Activator.CreateInstance<S>();
-            sb.Store(this, descriptor);
-        }
-
-        public static ContactList Load<S>(object descriptor) where S : StorageBackend
-        {
-            StorageBackend sb = Activator.CreateInstance<S>();
-            return sb.Load(descriptor);
-        }
-
-        public Contact this[int idx]
-        {
-            get
+            get { return _Groups; }
+            set
             {
-                return Contacts[idx];
+                _Groups = value;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("Groups"));
             }
         }
 
-        #region IEnumerable
-        public IEnumerator<Contact> GetEnumerator()
+        public ContactGroup DefaultGroup
         {
-            return Contacts.GetEnumerator();
+            get { return GetGroup("Ungrouped"); }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        public IEnumerable<Contact> Contacts
         {
-            return Contacts.GetEnumerator();
+            get { return Groups.SelectMany(g => g.Contacts); }
         }
+
+        #region IDeserializationCallback Members
+
+        public void OnDeserialization(object sender)
+        {
+            Instance = this;
+        }
+
         #endregion
 
-        public void Remove(Contact contact)
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        #endregion
+
+        public Dictionary<string, int> GetGroupStats()
         {
-            Contacts.Remove(contact);
+            var r = new Dictionary<string, int>();
+            SqlDataReader reader = new SqlCommand("EXEC GroupStats", Connection).ExecuteReader();
+            while (reader.Read())
+            {
+                string gname = new SqlCommand("SELECT Name FROM ContactGroups WHERE id=" + reader.GetInt32(0), Connection).ExecuteScalar() as string;
+                r[gname] = reader.GetInt32(1);
+            }
+            return r;
         }
 
+        public void Reload()
+        {
+            isLoading = true;
+
+            Groups.Clear();
+            SqlDataReader reader = new SqlCommand("SELECT * FROM ContactGroups", Connection).ExecuteReader();
+            Console.WriteLine("Loading database");
+
+            while (reader.Read())
+            {
+                string name = reader.GetString(1);
+                var group = new ContactGroup(name);
+                Console.WriteLine("Loading group {0}", name);
+                Groups.Add(group);
+                group.ID = reader.GetInt32(0);
+
+                SqlDataReader greader =
+                    new SqlCommand("SELECT * FROM Contacts WHERE ContactGroup_id=" + reader.GetInt32(0), Connection).
+                        ExecuteReader();
+                while (greader.Read())
+                {
+                    var contact = new Contact(greader.GetString(1));
+                    contact.ID = greader.GetInt32(0);
+                    Console.WriteLine("Loading contact {0}", contact.Name);
+
+                    SqlDataReader dreader =
+                        new SqlCommand("SELECT * FROM ContactDetails WHERE Contact_id=" + greader.GetInt32(0),
+                                       Connection).ExecuteReader();
+                    while (dreader.Read())
+                    {
+                        var detail = new ContactDetail(dreader.GetString(1), dreader.GetString(2));
+                        detail.ID = dreader.GetInt32(0);
+                        Console.WriteLine("Loading detail {0}", detail.Name);
+                        contact.Details.Add(detail);
+                    }
+
+                    group.Contacts.Add(contact);
+                }
+            }
+            isLoading = false;
+        }
+
+        public void InvalidateContactList()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs("Contacts"));
+        }
+
+        public ContactGroup GetGroup(string name)
+        {
+            ContactGroup g = Groups.FirstOrDefault(x => x.Name == name);
+            if (g == null)
+            {
+                g = new ContactGroup(name);
+                g.Persist();
+                Groups.Add(g);
+            }
+            return g;
+        }
+
+        public ContactGroup GetGroupOf(Contact c)
+        {
+            return Groups.FirstOrDefault(x => x.Contains(c));
+        }
+
+        public void Remove(Contact c)
+        {
+            GetGroupOf(c).Contacts.Remove(c);
+            var deadGroups = new List<ContactGroup>();
+            foreach (ContactGroup g in Groups)
+                if (g.Contacts.Count == 0)
+                    deadGroups.Add(g);
+            foreach (ContactGroup g in deadGroups)
+            {
+                g.Destroy();
+                Groups.Remove(g);
+            }
+        }
+
+        public void Add(Contact contact, string g)
+        {
+            GetGroup(g).Contacts.Add(contact);
+            contact.Persist();
+            InvalidateContactList();
+        }
     }
 }

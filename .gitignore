@@ -1,3 +1,4 @@
 *.suo
 *Debug*
 *TestResults*
+*ReSharper*

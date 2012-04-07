@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ContactsLib.Entities;
 
 namespace ContactsApp
 {
@@ -19,23 +10,14 @@ namespace ContactsApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public App Controller;
-
-        public MainWindow(App c)
+        public MainWindow(Controller c)
         {
             Controller = c;
             InitializeComponent();
+            GroupGraph.Update();
         }
 
-        private void OpenButton_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.LoadContactList();
-        }
-
-        internal void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Controller.SelectContact((int)(((sender as ListBox).SelectedItem as FrameworkElement).Tag));
-        }
+        public Controller Controller { get; set; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -56,28 +38,20 @@ namespace ContactsApp
                 AddContactPanel.Visibility = Visibility.Collapsed;
                 Controller.CreateContact(AddContactName.Text);
                 AddContactName.Text = "";
+                GroupGraph.Update();
             }
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             Controller.RemoveContact();
-        }
-
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.SaveContactList();
-        }
-
-        private void NewButton_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.NewContactList();
+            GroupGraph.Update();
         }
 
         private void AddDetail_Click(object sender, RoutedEventArgs e)
         {
-            AddDetailPanel.Visibility = System.Windows.Visibility.Visible;
-            AddDetailTitle.Text = ((FrameworkElement)sender).Tag as string;
+            AddDetailPanel.Visibility = Visibility.Visible;
+            AddDetailTitle.Text = ((FrameworkElement) sender).Tag as string;
             AddDetailValue.Text = "";
             AddDetailValue.Focus();
             AddDetailPopup.IsOpen = false;
@@ -88,19 +62,46 @@ namespace ContactsApp
             Controller.AddSimpleDetail(AddDetailTitle.Text, AddDetailValue.Text);
             AddDetailTitle.Text = "";
             AddDetailValue.Text = "";
-            AddDetailPanel.Visibility = System.Windows.Visibility.Collapsed;
+            AddDetailPanel.Visibility = Visibility.Collapsed;
+            GroupGraph.Update();
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             AddDetailTitle.Text = "";
             AddDetailValue.Text = "";
-            AddDetailPanel.Visibility = System.Windows.Visibility.Collapsed;
+            AddDetailPanel.Visibility = Visibility.Collapsed;
         }
 
         private void AddDetailButton_Click(object sender, RoutedEventArgs e)
         {
             AddDetailPopup.IsOpen = true;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void ContactName_Changed(EditableField arg1, string arg2)
+        {
+            Controller.ContactList.InvalidateContactList();
+        }
+
+
+        private void Group_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Controller.ChangeContactGroup(Controller.CurrentContact, (sender as ComboBox).Text);
+                GroupGraph.Update();
+            }
+        }
+
+        private void EditableField_Deleted(EditableField obj)
+        {
+            (obj.Tag as ContactDetail).Destroy();
+            Controller.CurrentContact.Details.Remove(obj.Tag as ContactDetail);
+            GroupGraph.Update();
         }
     }
 }
