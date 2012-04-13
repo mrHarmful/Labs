@@ -8,7 +8,7 @@ namespace ContactsApp
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public MainWindow(Controller c)
         {
@@ -92,14 +92,14 @@ namespace ContactsApp
         {
             if (e.Key == Key.Enter)
             {
-                Controller.ChangeContactGroup(Controller.CurrentContact, (sender as ComboBox).Text);
+                Controller.ChangeContactGroup(Controller.CurrentContact, ((ComboBox) sender).Text);
                 GroupGraph.Update();
             }
         }
 
         private void EditableField_Deleted(EditableField obj)
         {
-            (obj.Tag as ContactDetail).Destroy();
+            ((ContactDetail) obj.Tag).Destroy();
             Controller.CurrentContact.Details.Remove(obj.Tag as ContactDetail);
             GroupGraph.Update();
         }

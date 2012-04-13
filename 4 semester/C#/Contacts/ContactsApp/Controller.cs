@@ -1,7 +1,5 @@
 ﻿using System.Windows;
-using ContactsLib;
 using ContactsLib.Entities;
-using Microsoft.Win32;
 
 namespace ContactsApp
 {
@@ -17,7 +15,7 @@ namespace ContactsApp
 
         public Controller(string conn)
         {
-           ContactList = new ContactList(conn);
+            ContactList = new ContactList(conn);
             ContactList.Reload();
         }
 
@@ -42,7 +40,7 @@ namespace ContactsApp
 
         public void AddSimpleDetail(string title, string value)
         {
-            ContactDetail d = new ContactDetail(title, value);
+            var d = new ContactDetail(title, value);
             CurrentContact.Details.Add(d);
             d.Persist();
         }

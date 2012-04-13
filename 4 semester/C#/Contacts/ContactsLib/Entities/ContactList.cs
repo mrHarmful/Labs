@@ -6,17 +6,16 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Serialization;
-using ContactsLib.Entities;
 
-namespace ContactsLib
+namespace ContactsLib.Entities
 {
     [DataContract]
     public class ContactList : INotifyPropertyChanged, IDeserializationCallback
     {
         public static ContactList Instance;
-        private ObservableCollection<ContactGroup> _Groups = new ObservableCollection<ContactGroup>();
+        private ObservableCollection<ContactGroup> _groups = new ObservableCollection<ContactGroup>();
         private SqlConnection _connection;
-        internal bool isLoading;
+        internal bool IsLoading;
 
         public ContactList(string conn)
         {
@@ -40,10 +39,10 @@ namespace ContactsLib
         [DataMember]
         public ObservableCollection<ContactGroup> Groups
         {
-            get { return _Groups; }
+            get { return _groups; }
             set
             {
-                _Groups = value;
+                _groups = value;
                 if (PropertyChanged != null)
                     PropertyChanged(this, new PropertyChangedEventArgs("Groups"));
             }
@@ -80,7 +79,7 @@ namespace ContactsLib
             SqlDataReader reader = new SqlCommand("EXEC GroupStats", Connection).ExecuteReader();
             while (reader.Read())
             {
-                string gname = new SqlCommand("SELECT Name FROM ContactGroups WHERE id=" + reader.GetInt32(0), Connection).ExecuteScalar() as string;
+                var gname = new SqlCommand("SELECT Name FROM ContactGroups WHERE id=" + reader.GetInt32(0), Connection).ExecuteScalar() as string;
                 r[gname] = reader.GetInt32(1);
             }
             return r;
@@ -88,7 +87,7 @@ namespace ContactsLib
 
         public void Reload()
         {
-            isLoading = true;
+            IsLoading = true;
 
             Groups.Clear();
             SqlDataReader reader = new SqlCommand("SELECT * FROM ContactGroups", Connection).ExecuteReader();
@@ -107,8 +106,7 @@ namespace ContactsLib
                         ExecuteReader();
                 while (greader.Read())
                 {
-                    var contact = new Contact(greader.GetString(1));
-                    contact.ID = greader.GetInt32(0);
+                    var contact = new Contact(greader.GetString(1)) {ID = greader.GetInt32(0)};
                     Console.WriteLine("Loading contact {0}", contact.Name);
 
                     SqlDataReader dreader =
@@ -116,8 +114,8 @@ namespace ContactsLib
                                        Connection).ExecuteReader();
                     while (dreader.Read())
                     {
-                        var detail = new ContactDetail(dreader.GetString(1), dreader.GetString(2));
-                        detail.ID = dreader.GetInt32(0);
+                        var detail = new ContactDetail(dreader.GetString(1), dreader.GetString(2))
+                                         {ID = dreader.GetInt32(0)};
                         Console.WriteLine("Loading detail {0}", detail.Name);
                         contact.Details.Add(detail);
                     }
@@ -125,7 +123,7 @@ namespace ContactsLib
                     group.Contacts.Add(contact);
                 }
             }
-            isLoading = false;
+            IsLoading = false;
         }
 
         public void InvalidateContactList()
@@ -153,10 +151,7 @@ namespace ContactsLib
         public void Remove(Contact c)
         {
             GetGroupOf(c).Contacts.Remove(c);
-            var deadGroups = new List<ContactGroup>();
-            foreach (ContactGroup g in Groups)
-                if (g.Contacts.Count == 0)
-                    deadGroups.Add(g);
+            var deadGroups = Groups.Where(g => g.Contacts.Count == 0).ToList();
             foreach (ContactGroup g in deadGroups)
             {
                 g.Destroy();

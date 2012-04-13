@@ -79,7 +79,7 @@ namespace ContactsLib.Entities
 
         public void Destroy()
         {
-            if (ContactList.Instance.isLoading)
+            if (ContactList.Instance.IsLoading)
                 return;
 
             new SqlCommand(

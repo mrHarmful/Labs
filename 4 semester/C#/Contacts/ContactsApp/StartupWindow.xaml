@@ -1,0 +1,16 @@
+﻿<Window x:Class="ContactsApp.StartupWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="StartupWindow" Height="133" Width="444"
+        WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+  <StackPanel Margin="5">
+    <Label>Connection string</Label>
+    <TextBox Name="StringBox" />
+    <Button HorizontalAlignment="Right" Margin="0,5,0,0" Padding="5" Click="Button_Click">Connect</Button>
+  </StackPanel>
+</Window>

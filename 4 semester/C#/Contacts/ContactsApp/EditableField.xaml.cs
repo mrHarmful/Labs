@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace ContactsApp
@@ -8,7 +7,7 @@ namespace ContactsApp
     /// <summary>
     /// Interaction logic for EditableField.xaml
     /// </summary>
-    public partial class EditableField : UserControl
+    public partial class EditableField
     {
         public static DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof (string),
                                                                                     typeof (EditableField));
