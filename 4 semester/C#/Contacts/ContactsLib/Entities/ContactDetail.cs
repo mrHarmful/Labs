@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace ContactsLib.Entities
@@ -18,7 +19,7 @@ namespace ContactsLib.Entities
             Content = value;
             PropertyChanged += delegate
                                    {
-                                       if (ContactList.Instance.isLoading)
+                                       if (ContactList.Instance.IsLoading)
                                            return;
 
                                        Persist();
@@ -53,15 +54,7 @@ namespace ContactsLib.Entities
 
         public void Persist()
         {
-            Contact c = null;
-            foreach (Contact contact in ContactList.Instance.Contacts)
-            {
-                if (contact.Details.Contains(this))
-                {
-                    c = contact;
-                    break;
-                }
-            }
+            Contact c = ContactList.Instance.Contacts.FirstOrDefault(contact => contact.Details.Contains(this));
             if (c == null) return;
 
             if (ID == -1)
@@ -84,7 +77,7 @@ namespace ContactsLib.Entities
 
         public void Destroy()
         {
-            if (ContactList.Instance.isLoading)
+            if (ContactList.Instance.IsLoading)
                 return;
 
             new SqlCommand(

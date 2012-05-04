@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
@@ -17,9 +16,9 @@ namespace ContactsLib.Entities
         public Contact(string name)
         {
             Name = name;
-            PropertyChanged += delegate(object sender, PropertyChangedEventArgs args)
+            PropertyChanged += delegate
                                    {
-                                       if (ContactList.Instance.isLoading)
+                                       if (ContactList.Instance.IsLoading)
                                            return;
 
                                        Persist();
@@ -87,7 +86,7 @@ namespace ContactsLib.Entities
 
         public void Destroy()
         {
-            if (ContactList.Instance.isLoading)
+            if (ContactList.Instance.IsLoading)
                 return;
 
             new SqlCommand(
