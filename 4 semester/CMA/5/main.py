@@ -12,7 +12,7 @@ x = Symbol('x')
 fx = x**3 + a*x**2 + b*x + c
 
 L = -10.0
-R = 20.0
+R = 160.0
 
 print "F(x):", 	fx
 #fx = x
@@ -82,7 +82,7 @@ def split_roots(fx, l, r):
 		l = i
 		i = isolate_next_root(fx, i, r)
 		interval = [l,i]
-		interval = compactize_interval(fx, interval, 1)
+		interval = compactize_interval(fx, interval, 0.1)
 		res += [interval]
 	return res
 

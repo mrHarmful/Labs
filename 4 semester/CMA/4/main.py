@@ -155,6 +155,13 @@ print '[A]'
 mprint(A)
 
 
+for i in range(0,len(A)):
+	for j in range(0,len(A)):
+		if A[i][j] != A[j][i]:
+			print 'Matrix is not symmetric!'
+			sys.exit(1)
+
+
 print 'Solving'
 
 count = 0
@@ -162,10 +169,12 @@ E = [[0] * len(A) for i in range(0, len(A))]
 for i in range(0,len(A)):
 	E[i][i] = 1
 V = deepcopy(E)
-mprint(V)
 
 
 while True:
+	print 'A'
+	mprint(A)
+
 	count += 1
 	mi = 0
 	mj = 1
@@ -185,7 +194,11 @@ while True:
 	_V[mi][mj] = -sinf
 	_V[mj][mi] = sinf
 
+	print 'V'
+	mprint (_V)
+
 	V = mmmul(V,_V)
+
 
 	B = deepcopy(A)
 	B[mi][mi] = cosf*cosf * A[mi][mi] - 2 * sinf*cosf * A[mi][mj] + sinf*sinf*A[mj][mj]
