@@ -13,9 +13,9 @@ namespace ContactsApp
                                                                                               typeof (Contact),
                                                                                               typeof (Controller));
 
-        public Controller(string conn)
+        public Controller()
         {
-            ContactList = new ContactList(conn);
+            ContactList = new ContactList();
             ContactList.Reload();
         }
 
@@ -36,6 +36,7 @@ namespace ContactsApp
             var c = new Contact(name);
             ContactList.DefaultGroup.Contacts.Add(c);
             c.Persist();
+            ContactList.InvalidateContactList();
         }
 
         public void AddSimpleDetail(string title, string value)
@@ -47,8 +48,9 @@ namespace ContactsApp
 
         public void RemoveContact()
         {
-            CurrentContact.Destroy();
-            ContactList.Remove(CurrentContact);
+            Contact c = CurrentContact;
+            ContactList.Remove(c);
+            ContactList.InvalidateContactList();
         }
 
         public void ChangeContactGroup(Contact contact, string g)
@@ -59,6 +61,7 @@ namespace ContactsApp
                 ContactList.Add(contact, g);
                 CurrentContact = contact;
                 contact.Persist();
+                ContactList.InvalidateContactList();
             }
         }
     }

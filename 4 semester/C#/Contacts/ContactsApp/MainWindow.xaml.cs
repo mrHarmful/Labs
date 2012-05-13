@@ -99,8 +99,8 @@ namespace ContactsApp
 
         private void EditableField_Deleted(EditableField obj)
         {
-            ((ContactDetail) obj.Tag).Destroy();
             Controller.CurrentContact.Details.Remove(obj.Tag as ContactDetail);
+            ((ContactDetail)obj.Tag).Destroy();
             GroupGraph.Update();
         }
     }

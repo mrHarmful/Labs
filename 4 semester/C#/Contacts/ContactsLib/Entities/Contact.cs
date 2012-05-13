@@ -1,31 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.SqlClient;
-using System.Runtime.Serialization;
+using ContactsLib.Mappings;
 
 namespace ContactsLib.Entities
 {
-    [DataContract]
     public class Contact : IComparable<Contact>, INotifyPropertyChanged
     {
-        internal long ID = -1;
-        [DataMember] private ObservableCollection<ContactDetail> _Details = new ObservableCollection<ContactDetail>();
-        [DataMember] private string _Name;
+        private IList<ContactDetail> _Details = new ObservableCollection<ContactDetail>();
+        private string _Name;
+
+        public Contact()
+        {
+        }
 
         public Contact(string name)
         {
             Name = name;
-            PropertyChanged += delegate
-                                   {
-                                       if (ContactList.Instance.IsLoading)
-                                           return;
-
-                                       Persist();
-                                   };
         }
 
-        public string Name
+        public virtual long ID { get; set; }
+
+        public virtual string Name
         {
             get { return _Name; }
             set
@@ -35,7 +32,7 @@ namespace ContactsLib.Entities
             }
         }
 
-        public ObservableCollection<ContactDetail> Details
+        public virtual IList<ContactDetail> Details
         {
             get { return _Details; }
             set
@@ -45,14 +42,14 @@ namespace ContactsLib.Entities
             }
         }
 
-        public string Group
+        public virtual string Group
         {
             get { return ContactList.Instance.GetGroupOf(this).Name; }
         }
 
         #region IComparable<Contact> Members
 
-        public int CompareTo(Contact other)
+        public virtual int CompareTo(Contact other)
         {
             return Name.CompareTo(other.Name);
         }
@@ -61,38 +58,22 @@ namespace ContactsLib.Entities
 
         #region INotifyPropertyChanged Members
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public virtual event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         #endregion
 
-        public void Persist()
+        public virtual void Destroy()
         {
-            ContactGroup g = ContactList.Instance.GetGroupOf(this);
-            if (ID == -1)
-            {
-                if (g == null) return;
-                ID = (int) (new SqlCommand(
-                               String.Format("INSERT INTO Contacts (Name, ContactGroup_id) OUTPUT INSERTED.id VALUES ('{0}', {1})", Name, g.ID)
-                               , ContactList.Instance.Connection).ExecuteScalar());
-            }
-            else
-            {
-                new SqlCommand(
-                    String.Format("UPDATE Contacts SET Name = '{0}', ContactGroup_id={1} WHERE id = {2}",
-                                  Name, g.ID, ID), ContactList.Instance.Connection).
-                    ExecuteNonQuery();
-            }
+            foreach (var contactDetail in Details)
+                contactDetail.Destroy();
+            Persistence.Session.Delete(this);
+            Persistence.Session.Flush();
         }
 
-        public void Destroy()
+        public virtual void Persist()
         {
-            if (ContactList.Instance.IsLoading)
-                return;
-
-            new SqlCommand(
-                String.Format("DELETE FROM Contacts WHERE id = {0}",
-                              ID), ContactList.Instance.Connection).
-                ExecuteNonQuery();
+            Persistence.Session.SaveOrUpdate(this);
+            Persistence.Session.Flush();
         }
     }
 }

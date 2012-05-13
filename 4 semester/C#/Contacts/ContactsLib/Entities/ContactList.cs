@@ -1,42 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.Serialization;
+using ContactsLib.Mappings;
 
 namespace ContactsLib.Entities
 {
-    [DataContract]
-    public class ContactList : INotifyPropertyChanged, IDeserializationCallback
+    public class ContactList : INotifyPropertyChanged
     {
         public static ContactList Instance;
-        private ObservableCollection<ContactGroup> _groups = new ObservableCollection<ContactGroup>();
-        private SqlConnection _connection;
         internal bool IsLoading;
+        private ObservableCollection<ContactGroup> _groups = new ObservableCollection<ContactGroup>();
 
-        public ContactList(string conn)
+        public ContactList()
         {
             Instance = this;
-            Connection = new SqlConnection(conn);
         }
 
-        internal SqlConnection Connection
-        {
-            get
-            {
-                if (_connection.State != ConnectionState.Open)
-                {
-                    _connection.Open();
-                }
-                return _connection;
-            }
-            set { _connection = value; }
-        }
-
-        [DataMember]
         public ObservableCollection<ContactGroup> Groups
         {
             get { return _groups; }
@@ -58,30 +38,22 @@ namespace ContactsLib.Entities
             get { return Groups.SelectMany(g => g.Contacts); }
         }
 
-        #region IDeserializationCallback Members
-
-        public void OnDeserialization(object sender)
-        {
-            Instance = this;
-        }
-
-        #endregion
-
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         #endregion
 
+        public void OnDeserialization(object sender)
+        {
+            Instance = this;
+        }
+
         public Dictionary<string, int> GetGroupStats()
         {
             var r = new Dictionary<string, int>();
-            SqlDataReader reader = new SqlCommand("EXEC GroupStats", Connection).ExecuteReader();
-            while (reader.Read())
-            {
-                var gname = new SqlCommand("SELECT Name FROM ContactGroups WHERE id=" + reader.GetInt32(0), Connection).ExecuteScalar() as string;
-                r[gname] = reader.GetInt32(1);
-            }
+            foreach (ContactGroup g in Groups)
+                r[g.Name] = g.Contacts.Count;
             return r;
         }
 
@@ -90,39 +62,9 @@ namespace ContactsLib.Entities
             IsLoading = true;
 
             Groups.Clear();
-            SqlDataReader reader = new SqlCommand("SELECT * FROM ContactGroups", Connection).ExecuteReader();
-            Console.WriteLine("Loading database");
+            foreach (ContactGroup g in Persistence.Session.CreateCriteria<ContactGroup>().List<ContactGroup>())
+                Groups.Add(g);
 
-            while (reader.Read())
-            {
-                string name = reader.GetString(1);
-                var group = new ContactGroup(name);
-                Console.WriteLine("Loading group {0}", name);
-                Groups.Add(group);
-                group.ID = reader.GetInt32(0);
-
-                SqlDataReader greader =
-                    new SqlCommand("SELECT * FROM Contacts WHERE ContactGroup_id=" + reader.GetInt32(0), Connection).
-                        ExecuteReader();
-                while (greader.Read())
-                {
-                    var contact = new Contact(greader.GetString(1)) {ID = greader.GetInt32(0)};
-                    Console.WriteLine("Loading contact {0}", contact.Name);
-
-                    SqlDataReader dreader =
-                        new SqlCommand("SELECT * FROM ContactDetails WHERE Contact_id=" + greader.GetInt32(0),
-                                       Connection).ExecuteReader();
-                    while (dreader.Read())
-                    {
-                        var detail = new ContactDetail(dreader.GetString(1), dreader.GetString(2))
-                                         {ID = dreader.GetInt32(0)};
-                        Console.WriteLine("Loading detail {0}", detail.Name);
-                        contact.Details.Add(detail);
-                    }
-
-                    group.Contacts.Add(contact);
-                }
-            }
             IsLoading = false;
         }
 
@@ -137,7 +79,8 @@ namespace ContactsLib.Entities
             if (g == null)
             {
                 g = new ContactGroup(name);
-                g.Persist();
+                Persistence.Session.Save(g);
+                Persistence.Session.Flush();
                 Groups.Add(g);
             }
             return g;
@@ -145,24 +88,25 @@ namespace ContactsLib.Entities
 
         public ContactGroup GetGroupOf(Contact c)
         {
-            return Groups.FirstOrDefault(x => x.Contains(c));
+            return Groups.FirstOrDefault(x => x.Contacts.Contains(c));
         }
 
         public void Remove(Contact c)
         {
             GetGroupOf(c).Contacts.Remove(c);
-            var deadGroups = Groups.Where(g => g.Contacts.Count == 0).ToList();
+            List<ContactGroup> deadGroups = Groups.Where(g => g.Contacts.Count == 0).ToList();
             foreach (ContactGroup g in deadGroups)
             {
-                g.Destroy();
                 Groups.Remove(g);
+                Persistence.Session.Delete(g);
+                Persistence.Session.Flush();
             }
+            c.Destroy();
         }
 
         public void Add(Contact contact, string g)
         {
             GetGroup(g).Contacts.Add(contact);
-            contact.Persist();
             InvalidateContactList();
         }
     }

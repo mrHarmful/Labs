@@ -6,7 +6,7 @@ namespace ContactsApp
     {
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            new StartupWindow().Show();
+            new MainWindow(new Controller()).Show();
         }
     }
 }
