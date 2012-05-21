@@ -1,32 +1,27 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.Serialization;
+using ContactsLib.Mappings;
 
 namespace ContactsLib.Entities
 {
-    [DataContract]
     public class ContactDetail : INotifyPropertyChanged
     {
-        internal long ID = -1;
-        [DataMember] private string _Content;
-        [DataMember] public String _Name;
+        private string _Content;
+        private String _Name;
+
+        public ContactDetail()
+        {
+        }
 
         public ContactDetail(string name, string value)
         {
             Name = name;
             Content = value;
-            PropertyChanged += delegate
-                                   {
-                                       if (ContactList.Instance.IsLoading)
-                                           return;
-
-                                       Persist();
-                                   };
         }
 
-        public string Name
+        public virtual long ID { get; set; }
+
+        public virtual string Name
         {
             get { return _Name; }
             set
@@ -36,7 +31,7 @@ namespace ContactsLib.Entities
             }
         }
 
-        public string Content
+        public virtual string Content
         {
             get { return _Content; }
             set
@@ -48,42 +43,20 @@ namespace ContactsLib.Entities
 
         #region INotifyPropertyChanged Members
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public virtual event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         #endregion
 
-        public void Persist()
+        public virtual void Destroy()
         {
-            Contact c = ContactList.Instance.Contacts.FirstOrDefault(contact => contact.Details.Contains(this));
-            if (c == null) return;
-
-            if (ID == -1)
-            {
-                ID = (int) (new SqlCommand(
-                               String.Format(
-                                   "INSERT INTO ContactDetails (Title, Value, Contact_id) OUTPUT INSERTED.id VALUES ('{0}', '{1}', {2})",
-                                   Name, Content, c.ID)
-                               , ContactList.Instance.Connection).ExecuteScalar());
-            }
-            else
-            {
-                new SqlCommand(
-                    String.Format(
-                        "UPDATE ContactDetails SET Title = '{0}', Value = '{2}', Contact_id = {3} WHERE id = {1}",
-                        Name, ID, Content, c.ID), ContactList.Instance.Connection).
-                    ExecuteNonQuery();
-            }
+            Persistence.Session.Delete(this);
+            Persistence.Session.Flush();
         }
 
-        public void Destroy()
+        public virtual void Persist()
         {
-            if (ContactList.Instance.IsLoading)
-                return;
-
-            new SqlCommand(
-                String.Format("DELETE FROM ContactDetails WHERE id = {0}",
-                              ID), ContactList.Instance.Connection).
-                ExecuteNonQuery();
+            Persistence.Session.SaveOrUpdate(this);
+            Persistence.Session.Flush();
         }
     }
 }

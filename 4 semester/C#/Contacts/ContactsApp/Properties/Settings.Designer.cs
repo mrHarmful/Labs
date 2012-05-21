@@ -22,18 +22,5 @@ namespace ContactsApp.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=hv02.linology.info;Initial Catalog=Contacts;User Id=admin;Password=ad" +
-            "min;MultipleActiveResultSets=yes")]
-        public string ConnectionString {
-            get {
-                return ((string)(this["ConnectionString"]));
-            }
-            set {
-                this["ConnectionString"] = value;
-            }
-        }
     }
 }
