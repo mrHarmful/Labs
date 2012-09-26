@@ -5,18 +5,33 @@ import matplotlib.lines as lines
 import matplotlib.transforms as mtransforms
 import matplotlib.text as mtext
 import sympy
+import sys
 
 
 a = 0.5
 m = 1.0
 
-df = lambda x,y : (a*(1-y*y)) / ((1+m)*x*x + y*y + 1)
 x0 = 0
 y0 = 0
 
-h = 1
-minx = 0.0
+e = 0.001
+h0 = 0.5
+
+minx = 0
 maxx = 1.0
+
+
+if len(sys.argv) > 1:
+	e = float(sys.argv[1])
+if len(sys.argv) > 2:
+	a = int(sys.argv[2])
+if len(sys.argv) > 3:
+	m = int(sys.argv[3])
+
+# Function
+df = lambda x,y : (a*(1-y*y)) / ((1+m)*x*x + y*y + 1)
+
+
 
 def step_euler_normal(x,y):
 	return y + h * df(x,y)
@@ -48,41 +63,63 @@ def plot_euler(stepfx):
 def converge_epsilon(stepfx):
 	global h
 	h = h0 * 2
-	yl = plot_euler(stepfx)[1][-1]
-	yk = -111
-	while abs(yk-yl) > e:
+	xsl, ysl = plot_euler(stepfx)
+	steps = 0
+	while True:
+		steps += 1
 		h /= 2
-		yk = yl
+		ysk = ysl
+		xsk = xsl
+
 		xs,ys = plot_euler(stepfx)
-		yl = ys[-1]
-	print 'step size for %s : %f' % (str(stepfx), h)
+		xsl, ysl = xs,ys
+
+		maxd = 0
+		for i in range(0,len(xsk)):
+			for j in range(0,len(xsl)):
+				if abs(xsk[i] - xsl[j]) < e:
+					maxd = max(maxd, abs(ysk[i] - ysl[j]))
+		#print maxd
+		if maxd < e:
+			break
+
+
+	print '%s\th = %f\tsteps = %i' % (stepfx.__name__[5:], h, steps)
+	#print '\n'.join('f(%f) = %f' % (xs[i], ys[i]) for i in range(0,len(xs)))
 	return xs, ys
 
 
 
-e = 0.001
-h0 = 0.5
+
+print ''.join(['\n']*40)
+
+e /= 2
 
 fig = plt.figure()
 
-# Euler normal
 ga = fig.add_subplot(111)
-h = 0.01
-ga.plot(*converge_epsilon(step_euler_normal), color='red')
 ga.grid()
+
+# Euler normal
+ga.plot(*converge_epsilon(step_euler_normal), color='red')
 
 # Euler extended
 ga.plot(*converge_epsilon(step_euler_ext), color='blue')
-ga.grid()
 
 # R-K
 ga.plot(*converge_epsilon(step_rounge_coutte), color='orange')
-ga.grid()
+#h = 0.5 
+#ga.plot(*plot_euler(step_rounge_coutte), color='green')
 
-# Euler precise
-h = 0.0001
-ga.plot(*converge_epsilon(step_euler_normal), color='green')
-ga.grid()
+#h = 0.25 
+#ga.plot(*plot_euler(step_rounge_coutte), color='green')
+
+# Euler fixed
+h = 0.25
+#ga.plot(*plot_euler(step_euler_normal), color='green')
+
+h = 0.01
+ga.plot(*plot_euler(step_rounge_coutte), color='green')
 
 
 fig.show()
