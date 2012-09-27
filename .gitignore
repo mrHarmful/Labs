@@ -2,3 +2,6 @@
 *Debug*
 *TestResults*
 *ReSharper*
+*.o
+app
+*a.out
