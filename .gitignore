@@ -5,3 +5,5 @@
 *.o
 app
 *a.out
+ipch
+*.pdb
