@@ -24,7 +24,7 @@ def mkxs(steps):
     return [xmin + (xmax - xmin) / steps * i for i in range(0, steps + 1)]
 
 def colocations(steps):
-    basis = mkbasis(steps)   
+    basis = mkbasis(steps)
     xs = mkxs(steps)
     ax = [1] + [Symbol('a%i' % i) for i in range(1, steps + 1)]
 
@@ -45,8 +45,8 @@ def colocations(steps):
 
 
 def mnk_int(steps):
-    basis = mkbasis(steps)   
-    xs = mkxs(steps)
+    basis = mkbasis(steps)
+    #xs = mkxs(steps)
     ax = [1] + [Symbol('a%i' % i) for i in range(1, steps + 1)]
 
     yapprox = sum(ax[i] * basis[i] for i in range(0, steps + 1))
@@ -84,7 +84,7 @@ def mnk_dis(steps):
 
 def galerkin(steps):
     basis = mkbasis(steps)
-    xs = mkxs(steps)
+    #xs = mkxs(steps)
     ax = [1] + [Symbol('a%i' % i) for i in range(1, steps + 1)]
 
     yapprox = sum(ax[i] * basis[i] for i in range(0, steps + 1))
@@ -96,6 +96,7 @@ def galerkin(steps):
     #print sol
     y = yapprox.subs(sol)
     return y
+
 
 def plot(fx, steps, ga, **kwargs):
     t0 = time.time()
@@ -114,22 +115,23 @@ def plot(fx, steps, ga, **kwargs):
 
 
 fig = plt.figure()
+fig.show()
 
-print 
+print
 ga = fig.add_subplot(221)
 ga.grid()
 
 plot(colocations, 2, ga, color='red')
 plot(colocations, 5, ga, color='green')
 
-print 
+print
 ga = fig.add_subplot(222)
 ga.grid()
 
 plot(mnk_int, 2, ga, color='red')
 plot(mnk_int, 5, ga, color='green')
 
-print 
+print
 ga = fig.add_subplot(223)
 ga.grid()
 
@@ -137,7 +139,7 @@ plot(mnk_dis, 2, ga, color='red')
 plot(mnk_dis, 5, ga, color='green')
 
 
-print 
+print
 ga = fig.add_subplot(224)
 ga.grid()
 
@@ -145,6 +147,5 @@ plot(galerkin, 2, ga, color='red')
 plot(galerkin, 5, ga, color='green')
 
 
-fig.show()
 while True:
     fig.waitforbuttonpress()
