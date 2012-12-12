@@ -82,7 +82,8 @@ int imageIdx = 0;
 void PaintImage(HWND hWnd, HBITMAP image, HDC hDc, int x, int y) {
 	HDC hCDC = CreateCompatibleDC(hDc);
 	SelectObject(hCDC, image);
-	BitBlt(hDc, x, y, 200, 200, hCDC, 0, 0, SRCCOPY);
+	//BitBlt(hDc, x, y, 200, 200, hCDC, 0, 0, SRCCOPY);
+	StretchBlt(hDc, x, y, 64, 64, hCDC, 0, 0, 200, 200, SRCCOPY);
 	DeleteDC(hCDC);
 }
 
@@ -100,7 +101,7 @@ void DoPaint(HWND hWnd) {
 	SelectObject(hCDC, brushWhite);
 	Rectangle(hCDC, -1, -1, 640, 480);
 
-	PaintImage(hWnd, hImages[imageIdx], hCDC, x - 50, y - 50);
+	PaintImage(hWnd, hImages[imageIdx], hCDC, x - 32, y - 32);
 
 	BitBlt(hDc, 0, 0, 640, 480, hCDC, 0, 0, SRCCOPY);
 	EndPaint(hWnd, &ps);
@@ -110,15 +111,22 @@ void DoPaint(HWND hWnd) {
 
 void DoTimer(HWND hWnd) {
 	int newIdx = imageIdx;
-	while (newIdx == imageIdx)
+	bool moving = FALSE;
+
+	if (x != xt) {
+		x -= (x-xt)/abs(x-xt) * 10;
+		moving = TRUE;
+	}
+	if (y != yt) {
+		y -= (y-yt)/abs(y-yt) * 10;
+		moving = TRUE;
+	}
+
+	while (newIdx == imageIdx && moving)
 		newIdx = rand() % 4;
 	imageIdx = newIdx;
-	if (x != xt)
-		x -= (x-xt)/abs(x-xt) * 10;
-	if (y != yt)
-		y -= (y-yt)/abs(y-yt) * 10;
+
 	InvalidateRect(hWnd, NULL, FALSE);
-	//DoPaint(hWnd);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
