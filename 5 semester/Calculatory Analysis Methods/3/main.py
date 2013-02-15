@@ -17,6 +17,7 @@ b = math.cos(5)
 
 def mkbasis(steps):
     basis = [(x ** (i*2-2) * (1 - x ** 2)) for i in range(0, steps + 1)]
+    #basis = [(x ** i * (1 - x ** 2)) for i in range(0, steps + 1)]
     basis[0] = 0
     return basis
 
