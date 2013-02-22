@@ -1,33 +1,154 @@
 #include <stdio.h>
 
-int main() {
-    unsigned int a, b, c;
+#define SIZE 16
+#define REGISTER(x) char x[SIZE]
+#define DOPAUSE pause();
 
-    scanf("%i %i", &a, &b);
+#define TRACESUM
+#define TRACEMUL
+//#define PAUSE
 
-    unsigned int bit, idx, carry;
+typedef char* reg_p;
 
-    carry = 0;
-    bit = 1;
-    idx = 0;
-    c = 0;
+void pause() {
+    #ifdef PAUSE
+    char buf[1024];
+    printf("Continue?\n");
+    gets(buf);
+    #endif
+}
 
-    while (idx < 31) {
-        bit = 1 << idx;
-        if ((a & bit) ^ (b & bit) ^ (carry << idx))
-            c |= bit;
-            
-        carry = (a & b & bit) | ((carry << idx) & bit & (a | b));
-        
-        idx++;
+void store(reg_p r, int d) {
+    r[SIZE-1] = (d < 0) ? 1 : 0;
+    int neg = d < 0;
+    if (neg) {
+        d = -d - 1;
     }
 
-    int res;
-    res = c;
-    //if (c & (1 << 30))
-        //res = c & !(1 << 30);
+    for (int i = 0; i < SIZE-1; i++)
+        r[i] = 0;
 
-    printf("%u\n", c);
+    int idx = 0;
+    while (d > 0) {
+        r[idx++] = d % 2;
+        d /= 2;
+    }
 
-    return 0;
+    if (neg)
+        for (int i = 0; i < SIZE-1; i++)
+            r[i] = 1 - r[i];
+}
+
+int extract(reg_p r) {
+    int v = 0;
+    int neg = r[SIZE-1] == 1;
+
+    for (int i = SIZE-2; i >= 0; i--)
+        v = v * 2 + (neg ? 1 - r[i] : r[i]);
+
+    if (neg)
+        v = -v - 1;
+    return v;
+}
+
+void dump(reg_p r) {
+    for (int i = SIZE-1; i >= 0; i--) {
+        printf("%i", r[i]);
+    }
+    printf(" == %i\n", extract(r));
+}
+
+void add(reg_p RA, reg_p RB, reg_p RC) {
+    int idx = 0, carry = 0;
+    store(RC, 0);
+    for (int i = 0; i < SIZE; i++) {
+        RC[i] = RA[i] + RB[i] + carry;
+        carry = 0;
+        if (RC[i] > 1) {
+            carry = 1;
+            RC[i] %= 2;
+        }
+        #ifdef TRACE
+        printf("Step %i:\n", i);
+        dump(RC);
+        #endif
+    }
+}
+
+void sub(reg_p RA, reg_p RB, reg_p RC) {
+    REGISTER(RT);
+    int v = extract(RB);
+    store(RT, -v);
+    add(RA, RT, RC);
+}
+
+void shl(reg_p R) {
+    for (int i = SIZE-1; i >= 0; i--)
+        R[i] = R[i-1];
+    R[0] = 0;
+}
+
+void copy(reg_p RA, reg_p RB) {
+    store(RB, extract(RA));
+}
+
+void mul(reg_p RA, reg_p RB, reg_p RC) {
+    REGISTER(RT);
+    REGISTER(RT2);
+    store(RT, 0);
+    for (int i = SIZE-1; i >= 0; i--) {
+        shl(RT);
+        if (RA[i] == 1) {
+            add(RT, RB, RT2);
+            copy(RT2, RT);
+        }
+        #ifdef TRACEMUL
+        printf("Step %i:\n", SIZE - i);
+        dump(RT);
+        DOPAUSE
+        #endif
+    }
+    copy(RT, RC);
+
+    #ifdef TRACEMUL
+        store(RT2, 0);
+
+        for (int i = 0; i < SIZE; i++) printf(" ");
+        dump(RA);
+        for (int i = 0; i < SIZE; i++) printf(" ");
+        dump(RB);
+        printf("-----------------------------------\n");
+
+        for (int j = 0; j < SIZE; j++) {
+            for (int i = 0; i < SIZE - j; i++) printf(" ");
+            if (RA[j] == 1)
+                dump(RB);
+            else
+                dump(RT2);
+        }
+
+        printf("-----------------------------------\n");
+        for (int i = 0; i < SIZE; i++) printf(" ");
+        dump(RC);
+
+    #endif    
+}
+
+int main() {
+    REGISTER(RA);
+    REGISTER(RB);
+    REGISTER(RC);
+
+    store(RA, -5);
+    store(RB, 35);
+
+    mul(RA, RB, RC);
+
+    printf("\n\n");
+    dump(RA);
+    dump(RB);
+    printf("--------------------\n");
+    dump(RC);
+
+    return 0;   
 }

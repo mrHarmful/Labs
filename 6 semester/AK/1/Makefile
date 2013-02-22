@@ -1,5 +1,5 @@
 all:
-	gcc -g -m32 1.c
+	gcc -g -std=c99 -m32 1.c
 	./a.out
 
 clean:

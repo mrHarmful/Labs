@@ -1,12 +1,12 @@
 SOURCES = main.o
-BINARY = appd
+BINARY = app
 
 all: $(BINARY)
 
 $(BINARY): $(SOURCES) link
 
 link:	
-	gcc $(SOURCES) -lc -o $(BINARY)
+	gcc $(CFLAGS) $(SOURCES) -lc -lpthread -o $(BINARY)
 
 .o:
 	gcc -c $< -o $@
