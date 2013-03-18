@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SIZE 9
+#ifndef SIZE
+    #define SIZE 16
+#endif
 #define REGISTER(x) char x[SIZE]
 #define DOPAUSE pause();
 
@@ -58,6 +60,12 @@ void shl(reg_p R) {
     R[0] = 0;
 }
 
+void shr(reg_p R) {
+    for (int i = 0; i < SIZE - 1; i++)
+        R[i] = R[i+1];
+    R[SIZE - 1] = 0;
+}
+
 void shls(reg_p R, int sh) {
     for (int i = SIZE-1; i >= sh; i--)
         R[i] = R[i - sh];
@@ -66,16 +74,13 @@ void shls(reg_p R, int sh) {
     R[0] = 0;
 }
 
-void ashls(reg_p R, int sh) {
-    for (int i = SIZE-1; i >= 0; i--)
-        R[i] = R[(i+SIZE-sh)%SIZE];
-    R[0] = 0;
+void shrs(reg_p R, int sh) {
+    for (int i = 0; i < SIZE - 1; i++)
+        R[i] = R[i + sh];
+    for (int i = SIZE-1; i >= SIZE - sh; i--)
+        R[i] = R[SIZE - 1 - sh];
 }
 
-void ashrs(reg_p R, int sh) {
-    for (int i = 0; i < SIZE; i++)
-        R[i] = R[(i+sh) % SIZE];
-}
 
 void copy(reg_p RA, reg_p RB) {
     store(RB, extract(RA));

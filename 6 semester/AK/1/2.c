@@ -1,3 +1,4 @@
+#define SIZE 9
 #include "common.c"
 #define TRACEMUL
 
@@ -36,12 +37,13 @@ void mul_booth(reg_p RA, reg_p RB, reg_p RC) {
         } else if (b0 == 0 && b1 == 1) {
             add(RTP, RTS, RTT);
             copy(RTT, RTP);
-        } 
-        ashrs(RTP, 1);
+        }
+        shrs(RTP, 1);
     }
 
 
-    ashrs(RTP, 1);
+    shrs(RTP, 1);
+    
     RTP[SIZE-1] = RTP[SIZE-2];
     dump(RTP);
     copy(RTP, RC);
@@ -100,7 +102,10 @@ int main() {
 
     int a, b;
     printf("Numbers A, B:\n");
-    scanf("%i %i", &a, &b);
+    if (!scanf("%i %i", &a, &b)) {
+        printf("Invalid input\n");
+        return 1;
+    }
 
     store(RA, a);
     store(RB, b);
