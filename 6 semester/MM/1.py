@@ -11,7 +11,6 @@ import sys
 import random
 
 
-N = 2000
 K = 10
 
 
@@ -61,8 +60,7 @@ def get_dx(xs):
     return get_mx([abs(x - m) ** 2 for x in xs])
 
 
-def measure_coherency(rng, n):
-    di = 5
+def measure_coherency(rng, n, di):
     xs = [rng() for x in range(0, n)]
     ys = [xs[(i + di) % n] for i in range(0, n)]
     r = (get_mx([xs[i] * ys[i] for i in range(0, n)]) - get_mx(xs) * get_mx(ys)) / math.sqrt(get_dx(xs) * get_dx(ys))
@@ -85,8 +83,12 @@ ax = fig.add_subplot(122)
 ax.grid()
 
 xs = np.arange(4)
-ys = [measure_coherency(RNG, 100 * (10 ** n)) for n in xs]
-ax.plot(xs, ys)
+ys = [measure_coherency(RNG, 100 * (6 ** n), 1) for n in xs]
+ax.plot(xs, ys, color="red")
+ys = [measure_coherency(RNG, 100 * (6 ** n), 10) for n in xs]
+ax.plot(xs, ys, color="orange")
+ys = [measure_coherency(RNG, 100 * (6 ** n), 50) for n in xs]
+ax.plot(xs, ys, color="green")
 
 
 fig.show()

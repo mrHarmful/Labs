@@ -71,6 +71,16 @@ def measure_Fx(xs):
     ax.plot(xx, fs, color='green')
 
 
+def get_mx(xs):
+    return sum(xs) / len(xs)
+
+
+def get_dx(xs):
+    m = get_mx(xs)
+    return get_mx([abs(x - m) ** 2 for x in xs])
+
+
+
 plt.ion()
 fig = plt.figure()
 
@@ -85,6 +95,9 @@ measure_homogenity(ys, ax, '#ff0000')
 ax = fig.add_subplot(122)
 ax.grid()
 measure_Fx(ys)
+
+print 'M[x] = %.3f' % get_mx(ys)
+print 'd[x] = %.3f' % get_dx(ys)
 
 fig.show()
 while True:
