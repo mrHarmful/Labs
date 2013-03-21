@@ -2,10 +2,13 @@
 %define CODE_SELECTOR (2 << 3)
 %define RM_DATA_SELECTOR (3 << 3)
 %define RM_CODE_SELECTOR (4 << 3)
+%define TSS_1_SELECTOR (5 << 3)
+%define TSS_2_SELECTOR (6 << 3)
 
-%define OFFSET_RM   (80 * 2 * 2)
-%define OFFSET_PM   (80 * 2 * 3)
-%define OFFSET_RM2  (80 * 2 * 4)
+%define TSS_1_BASE (0x2000)
+%define TSS_2_BASE (0x2200)
+
+%define DELAY 3000000
 
 
 bits 16
@@ -46,6 +49,7 @@ pm_start:
     mov     es, ax
     mov     ss, ax
 
+    call    main
 
     ; Leaving PM
     jmp     RM_CODE_SELECTOR:pm_exiting
@@ -70,24 +74,138 @@ pm_exit:
     jmp $
 
 
-message:
-    db "Hello from tasks", 0
+
+bits 32
+
+main:
+    mov     edi, GDTEND
+    mov     ebx, TSS_1_BASE
+    call    make_tdesc
+
+    mov     edi, GDTEND + 8
+    mov     ebx, TSS_2_BASE
+    call    make_tdesc
 
 
-TSS0: times 64 db 0
-TSS1: times 64 db 0
-TSS2: times 64 db 0
+    mov     eax, task_1
+    mov     edi, TSS_1_BASE
+    call    make_tss
+
+    mov     eax, task_2
+    mov     edi, TSS_2_BASE
+    call    make_tss
+
+    jmp     TSS_1_SELECTOR:0
+
+    ret
+
+
+; edi = descriptor addr
+; ebx = base
+make_tdesc:
+    mov     word [edi], 0x100 ; limit 0-15
+    mov     word [edi + 2], bx ; base 0-15
+    mov     word [edi + 4],   1000100100000000b
+    mov     word [edi + 6], 0x4
+    ret
+
+
+; edi = base
+; eax = EIP
+make_tss:
+    mov     dword [edi + 0x8], DATA_SELECTOR
+    mov     dword [edi + 0x20], eax
+
+    mov     dword [edi + 0x48], DATA_SELECTOR ; ES
+    mov     dword [edi + 0x4c], CODE_SELECTOR ; CS
+    mov     dword [edi + 0x50], DATA_SELECTOR ; SS
+    mov     dword [edi + 0x54], DATA_SELECTOR ; CS
+    mov     dword [edi + 0x58], DATA_SELECTOR
+    mov     dword [edi + 0x5c], DATA_SELECTOR
+    mov     dword [edi + 0x64], 0x1000000
+    ret
+
+
+task_1:
+    mov     esi, message1
+    mov     edi, 0xb80a0
+
+    .lpmsg:
+        lodsb
+        stosb
+        inc     edi
+        test    al, al
+
+        mov     ecx, DELAY
+        loop    $
+
+        jmp     TSS_2_SELECTOR:0
+        jnz .lpmsg
+
+    mov     eax, [tasks_done]
+    bts     eax, 0
+    mov     [tasks_done], eax
+
+    .done
+        jmp     TSS_2_SELECTOR:0
+        jmp     .done
+
+
+task_2:
+    mov     esi, message2
+    mov     edi, 0xb8140
+    .lpmsg2:
+        lodsb
+        stosb
+        inc     edi
+        test    al, al
+
+        mov     ecx, DELAY
+        loop    $
+
+        jmp     TSS_1_SELECTOR:0
+        jnz .lpmsg2
+
+    mov     eax, [tasks_done]
+    bts     eax, 1
+    mov     [tasks_done], eax
+
+
+    ; wait task one
+    .wait
+        jmp     TSS_1_SELECTOR:0
+        mov     eax, [tasks_done]
+        test    eax, eax
+        jz     .wait
+
+    mov     esi, message3
+    mov     edi, 0xb81e0
+
+    .lpmsg:
+        lodsb
+        stosb
+        inc     edi
+        test    al, al
+        jnz .lpmsg
+
+
+message1:
+    db "First message", 0
+
+message2:
+    db "Message from task two; it's quite long!", 0
+
+message3:
+    db "Tasks done!", 0
+
+
+tasks_done:
+    dw 0
+
 
 GDTR:
-    dw 5 * 8 - 1
+    dw 8 * 8 - 1
     dq GDT
-
-
-%macro TSSDESC 1
-    db 0xff, 0xff
-    dw (%1 & 0xffff)
-    db ((%1 << 16) & 0xff), 0x92, 0x9f, ((%1 << 24) & 0xff) 
-%endmacro
 
 
 GDT:
@@ -97,8 +215,7 @@ GDT:
     db 0xff, 0xff, 0, 0, 0, 0x92, 0x0f, 0 ; RM DATA
     db 0xff, 0xff, 0, 0, 0, 0x9a, 0x0f, 0 ; RM CODE
 
-    ; TSS 0
-    TSSDESC(TSS0-$$)
+GDTEND:
 
 times 510-($-$$) db 0
     db 0x55
