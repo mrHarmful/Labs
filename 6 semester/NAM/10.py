@@ -21,11 +21,13 @@ Qi = [0, 0, 1, 1]
 Ai = [1, 1, 0.5, 0]
 Bi = [-1, -1, 0.8, 0.2]
 
+E = 2.71
+
 FX = lambda x, y: math.sin(x + y)
 #FX = lambda x, y: x*x+y*y
-BORDERFX = lambda x, y: 2#math.sin(x * 2 + y * 2)
-OUTER = 0
-LIMIT = 5000
+BORDERFX = lambda x, y: -1#math.sin(x * 2 + y * 2)
+OUTER = -4
+LIMIT = 2
 
 plt.ion()
 fig = plt.figure()
@@ -38,8 +40,7 @@ ax.grid()
 
 
 size = 10
-res = 19
-res = 13
+res = 12
 step = size * 1.0 / res
 
 matrix = np.zeros((res, res))
@@ -85,11 +86,21 @@ for s in symbollist:
         dscheme.append(s - BORDERFX(xs[x], ys[y]))  # BORDER
     if pointtypes[x][y] == 1:
         dschemesymbols.append(s)
+
+        dscheme.append(
+            -(E ** (- (xs[x] ** 2))) * 2 * xs[x] * (-s + symbols[x+1][y]) / step
+            + E ** (- (xs[x] ** 2)) * (symbols[x-1][y] - 2 * s + symbols[x+1][y]) / (step ** 2)
+            + (symbols[x][y-1] - 2 * s + symbols[x][y+1]) / (step ** 2)
+            - FX(x, y)
+        )
+
+        """
         dscheme.append(
             - (symbols[x-1][y] - 2 * s + symbols[x+1][y]) / (step ** 2)
             - (symbols[x][y-1] - 2 * s + symbols[x][y+1]) / (step ** 2)
             - FX(x, y)
         )
+        """
 
 print 'Solving'
 solution = solve(dscheme)
